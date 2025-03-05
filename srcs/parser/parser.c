@@ -12,6 +12,7 @@ t_command	*new_command(void)
 	cmd->input_file = NULL;
 	cmd->output_file = NULL;
 	cmd->append = 0;
+	cmd->delimiter = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }

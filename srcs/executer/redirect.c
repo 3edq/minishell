@@ -22,7 +22,6 @@ void	handle_redirections(t_command *cmd)
 			flags = O_WRONLY | O_CREAT | O_APPEND;
 		else
 			flags = O_WRONLY | O_CREAT | O_TRUNC;
-
 		fd = open(cmd->output_file, flags, 0644);
 		if (fd == -1)
 		{
@@ -39,19 +38,20 @@ void	handle_heredoc_execution(t_command *cmd)
 	int		pipefd[2];
 	pid_t	pid;
 	char	*line;
+	int		status;
 
 	if (!cmd->delimiter)
-		return;
+		return ;
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
-		return;
+		return ;
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
-		return;
+		return ;
 	}
 	if (pid == 0)
 	{
@@ -62,7 +62,7 @@ void	handle_heredoc_execution(t_command *cmd)
 			if (!line || ft_strcmp(line, cmd->delimiter) == 0)
 			{
 				free(line);
-				break;
+				break ;
 			}
 			write(pipefd[1], line, ft_strlen(line));
 			write(pipefd[1], "\n", 1);
@@ -73,7 +73,6 @@ void	handle_heredoc_execution(t_command *cmd)
 	}
 	else
 	{
-		int	status;
 		waitpid(pid, &status, 0);
 		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);

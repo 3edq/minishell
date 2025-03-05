@@ -14,6 +14,7 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 		original_stdin = dup(STDIN_FILENO);
 		original_stdout = dup(STDOUT_FILENO);
 		handle_redirections(cmd_list);
+		handle_heredoc_execution(cmd_list);
 		if (!cmd_list->args || !cmd_list->args[0])
 		{
 			fprintf(stderr, "Error: Invalid command\n");
