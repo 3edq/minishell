@@ -3,32 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 12:57:48 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/25 17:15:02 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:51:28 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 14:51:36 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
-size_t	ft_strlen(const char *s)
+size_t	ft_strlen(const char *str)
 {
-	size_t	length;
+	size_t	i;
 
-	length = 0;
-	while (s[length] != '\0')
-	{
-		length++;
-	}
-	return (length);
+	if (!str)
+		return (0);
+	i = 0;
+	while (str[i] != '\0')
+		i++;
+	return (i);
 }
+// #include <stdio.h>
 
-// int main()
+// int	main(void)
 // {
-// 	int str121 = strlen("chidoridaisuki");
-//     int str122 = ft_strlen("chidoridaisuki");
-//     printf("library: %d\n", str121);
-//     printf("zisaku : %d\n", str122);
+// 	const char	*test_str = "Hello, world!";
+// 	size_t		len;
+
+// 	len = ft_strlen(test_str);
+// 	printf("Length: %zu\n", len);
 // 	return (0);
 // }

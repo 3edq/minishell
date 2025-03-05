@@ -3,37 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 13:04:05 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 12:17:05 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:39 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 13:26:10 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 void	*ft_memset(void *s, int c, size_t n)
 {
-	size_t	i;
+	unsigned char	*ptr;
 
-	i = 0;
-	if (s == NULL)
+	if (!s)
 		return (NULL);
-	while (i < n)
+	ptr = (unsigned char *)s;
+	while (n > 0)
 	{
-		*((unsigned char *)s + i) = c;
-		i++;
+		*ptr = (unsigned char)c;
+		ptr++;
+		n--;
 	}
 	return (s);
 }
 
-// int main()
+// #include <stdio.h>
+
+// int	main(void)
 // {
-// 	char str01[] = "0123456789";
-//     char str02[] = "0123456789";
-//     ft_memset(str01 + 2, '*', 5);
-//     memset(str02 + 2, '*', 5);
-//     printf("zisaku  : %s\n", str01);
-//     printf("library : %s\n", str02);
+// 	char	str[50] = "Hello, World!";
+
+// 	printf("Before memset: %s\n", str);
+// 	ft_memset(str + 7, 'X', 5);
+// 	printf("After memset: %s\n", str);
 // 	return (0);
 // }

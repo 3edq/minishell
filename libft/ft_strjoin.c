@@ -3,30 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 15:38:27 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/26 21:55:27 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/24 12:37:01 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/28 19:36:02 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <limits.h>
+#include <stdlib.h>
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t	len1;
-	size_t	len2;
-	char	*res;
+	char	*new;
+	int		i;
+	int		j;
 
+	i = 0;
+	j = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	res = (char *)malloc(len1 + len2 + 1);
-	if (!res)
+	new = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (!new)
 		return (NULL);
-	ft_memcpy(res, s1, len1);
-	ft_memcpy(res + len1, s2, len2);
-	res[len1 + len2] = '\0';
-	return (res);
+	while (s1[i])
+	{
+		new[i] = s1[i];
+		i++;
+	}
+	while (s2[j])
+	{
+		new[i] = s2[j];
+		i++;
+		j++;
+	}
+	new[i] = '\0';
+	return (new);
 }
+
+// #include <stdio.h>
+
+// int	main(void)
+// {
+// 	char	*result;
+
+// 	result = ft_strjoin("Hello, ", "World!");
+// 	printf("Result 1: %s\n", result);
+// 	free(result);
+// 	result = ft_strjoin(NULL, "Only second string.");
+// 	printf("Result 2: %s\n", result);
+// 	free(result);
+// 	result = ft_strjoin("Only first string.", NULL);
+// 	printf("Result 3: %s\n", result);
+// 	free(result);
+// 	result = ft_strjoin(NULL, NULL);
+// 	printf("Result 4: %s\n", result);
+// 	return (0);
+// }

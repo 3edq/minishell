@@ -3,34 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 18:53:41 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/27 00:56:02 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:57 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 12:55:40 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 void	*ft_memchr(const void *s, int c, size_t n)
 {
-	size_t	i;
+	const unsigned char	*ptr = (const unsigned char *)s;
 
-	i = 0;
-	while (i < n)
+	if (!s)
+		return (NULL);
+	while (n > 0)
 	{
-		if (*((unsigned char *)s + i) == (unsigned char)c)
-			return ((void *)s + i);
-		i++;
+		if (*ptr == (unsigned char)c)
+		{
+			return ((void *)ptr);
+		}
+		ptr++;
+		n--;
 	}
 	return (NULL);
 }
+// #include <stdio.h>
 
-// int main()
+// int	main(void)
 // {
-//     char str51[] ="nesugosita!!!";
-//     char str52[] ="nesugosita!!!";
-//     printf("zisaku  : %s\n", ft_memchr(str51, 103, 15));
-//     printf("library : %s\n", memchr(str52, 103, 15));
+// 	const char	str[] = "Hello, World!";
+// 	char		ch;
+// 	char		*result;
+
+// 	ch = 'W';
+// 	result = ft_memchr(str, ch, sizeof(str));
+// 	if (result)
+// 		printf("Character '%c' found at position: %ld\n", ch, result - str);
+// 	else
+// 		printf("Character '%c' not found\n", ch);
 // 	return (0);
 // }

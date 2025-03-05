@@ -3,29 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 16:10:05 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/29 16:53:03 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:51:06 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/26 16:30:07 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
 int	ft_tolower(int c)
 {
-	if ('A' <= c && c <= 'Z')
-	{
+	if (c >= 'A' && c <= 'Z')
 		return (c + 32);
-	}
 	return (c);
 }
+// #include <stdio.h>
 
-// int main()
+// int	ft_tolower(int c);
+
+// int	main(void)
 // {
-// 	int str113 = tolower('A');
-//     int str114 = ft_tolower('A');
-//     printf("library: %c\n", str113);
-//     printf("zisaku : %c\n", str114);
+// 	char	test_char1;
+// 	char	test_char2;
+// 	char	test_char3;
+// 	char	test_char4;
+
+// 	test_char1 = 'A';
+// 	test_char2 = 'Z';
+// 	test_char3 = 'a';
+// 	test_char4 = '1';
+// 	printf("'%c' -> '%c'\n", test_char1, ft_tolower(test_char1));
+// 	printf("'%c' -> '%c'\n", test_char2, ft_tolower(test_char2));
+// 	printf("'%c' -> '%c'\n", test_char3, ft_tolower(test_char3));
+// 	printf("'%c' -> '%c'\n", test_char4, ft_tolower(test_char4));
 // 	return (0);
 // }

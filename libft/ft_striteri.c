@@ -3,26 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 12:13:40 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/26 21:38:27 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/24 13:34:33 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/28 15:08:35 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-void	ft_striteri(char *s, void (*f)(unsigned int, char*))
+void	ft_striteri(char *s, void (*f)(unsigned int, char *))
 {
-	int	i;
+	unsigned int	i;
 
 	if (!s || !f)
 		return ;
 	i = 0;
 	while (s[i] != '\0')
 	{
-		(*f)(i, &s[i]);
+		f(i, &s[i]);
 		i++;
 	}
-	s[i] = '\0';
 }
+
+// #include <stdio.h>
+
+// void	to_uppercase(unsigned int index, char *c)
+// {
+// 	(void)index;
+// 	if (*c >= 'a' && *c <= 'z')
+// 		*c -= 32;
+// }
+
+// int	main(void)
+// {
+// 	char	str[] = "hello, world!";
+
+// 	ft_striteri(str, to_uppercase);
+// 	printf("Result: %s\n", str);
+// 	return (0);
+// }

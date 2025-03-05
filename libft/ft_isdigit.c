@@ -3,31 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 12:36:53 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/29 16:33:56 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:53:05 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/26 14:07:40 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
 int	ft_isdigit(int c)
 {
-	if ('0' <= c && c <= '9')
-	{
+	if (c >= '0' && c <= '9')
 		return (1);
-	}
 	return (0);
 }
+// #include <stdio.h>
 
-// int main()
+// int	main(void)
 // {
-// 	printf("library :%d\n", isdigit('2'));
-//     printf("zisaku  :%d\n", ft_isdigit('2'));
-//     printf("library :%d\n", isdigit('A'));
-//     printf("zisaku  :%d\n", ft_isdigit('A'));
-//     printf("library :%d\n", isdigit('1'));
-//     printf("zisaku  :%d\n", ft_isdigit('1'));
+// 	printf("%c is digit: %d\n", '5', ft_isdigit('5'));
+// 	printf("%c is digit: %d\n", 'A', ft_isdigit('A'));
+// 	printf("%c is digit: %d\n", '9', ft_isdigit('9'));
+// 	printf("%c is digit: %d\n", '0', ft_isdigit('0'));
+// 	printf("%c is digit: %d\n", '!', ft_isdigit('!'));
+// 	printf("%d is digit: %d\n", 128, ft_isdigit(128));
+// 	printf("%d is digit: %d\n", -1, ft_isdigit(-1));
 // 	return (0);
 // }

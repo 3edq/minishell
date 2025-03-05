@@ -3,46 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 15:19:27 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/25 18:09:47 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:51:54 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 14:56:12 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 {
 	size_t	i;
-	size_t	count;
+	size_t	src_len;
 
+	if (!src || (!dest && size > 0))
+		return (0);
 	i = 0;
-	count = 0;
-	if (!dest || !src)
-		return (count);
-	while (src[count])
-		count++;
-	while (src[i] && i + 1 < size)
+	src_len = 0;
+	while (src[src_len] != '\0')
+		src_len++;
+	if (size == 0)
+		return (src_len);
+	while (src[i] != '\0' && i < size - 1)
 	{
 		dest[i] = src[i];
 		i++;
 	}
-	if (size)
-		dest[i] = '\0';
-	return (count);
+	dest[i] = '\0';
+	return (src_len);
 }
 
-// int main()
+// #include <stdio.h>
+
+// int	main(void)
 // {
-//     const char *src = "Hello, World!";
-//     char dest1[20];
-//     char dest2[5];
-//     size_t result1 = ft_strlcpy(dest1, src, sizeof(dest1));
-//     printf("Copied string: %s\n", dest1);
-//     printf("Length of source string: %zu\n", result1);
-//     size_t result2 = ft_strlcpy(dest2, src, sizeof(dest2));
-//     printf("Copied string (with limited size): %s\n", dest2);
-//     printf("Length of source string: %zu\n", result2);
-//     return 0;
+// 	char	src[] = "what the fuck";
+// 	char	dest[30];
+// 	size_t	copied_len;
+
+// 	copied_len = ft_strlcpy(dest, src, sizeof(dest));
+// 	printf("Copied string: %s\n", dest);
+// 	printf("Original string length: %zu\n", copied_len);
+// 	return (0);
 // }

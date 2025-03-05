@@ -1,38 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/23 17:53:24 by ksaegusa          #+#    #+#             */
-/*   Updated: 2024/10/26 13:18:38 by ksaegusa         ###   ########.fr       */
+/*   Created: 2024/12/05 15:31:06 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/12/05 16:00:07 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <strings.h>
+#include "libft.h"
 
-void	ft_bzero(void *s, size_t n)
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	unsigned char	*ptr;
-
-	ptr = (unsigned char *)s;
-	while (n > 0)
-	{
-		*ptr = 0;
-		ptr++;
-		n--;
-	}
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		ft_lstlast(*lst)->next = new;
+	else
+		*lst = new;
 }
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char str[50] = "Hello, World!";
-
-// 	printf("Before bzero: %s\n", str);
-// 	ft_bzero(str + 7, 6);
-// 	printf("After bzero: %s\n", str);
-
-// 	return (0);
-// }

@@ -3,47 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 19:11:42 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 12:31:48 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:53 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 12:54:30 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	size_t	i;
+	const unsigned char	*ptr1 = (const unsigned char *)s1;
+	const unsigned char	*ptr2 = (const unsigned char *)s2;
 
-	i = 0;
-	if (n == 0)
+	if (!s1 || !s2)
 		return (0);
-	while (i < n && *(unsigned char *)s1 == *(unsigned char *)s2)
+	while (n > 0)
 	{
-		i++;
-		s1++;
-		s2++;
+		if (*ptr1 != *ptr2)
+		{
+			return (*ptr1 - *ptr2);
+		}
+		ptr1++;
+		ptr2++;
+		n--;
 	}
-	if (i == n)
-		return (0);
-	return (*(unsigned char *)s1 - *(unsigned char *)s2);
+	return (0);
 }
+// #include <stdio.h>
+// #include <string.h>
 
-// int main()
+// int	main(void)
 // {
-// 	char str61[] ="nesugosita!!!";
-//     char str62[] ="nesugosita!!!";
-//     char str63[] = "nesugosita!!!";
-//     printf("zisaku  : %d\n", ft_memcmp(str61, str62, 15));
-//     printf("library : %d\n", memcmp(str61, str62, 15));
-// 	printf("zisaku  : %d\n", ft_memcmp(str63, str61, 15));
-//     printf("library : %d\n", memcmp(str63, str61, 15));
-//     printf("zisaku  : %d\n", ft_memcmp("aiueo", "aiue1", 5));
-//     printf("library : %d\n", memcmp("aiueo", "aiue1", 5));
-//     printf("zisaku  : %d\n", ft_memcmp("aiueo", "aiueo", 5));
-//     printf("library : %d\n", memcmp("aiueo", "aiueo", 5));
-//     printf("zisaku  : %d\n", ft_memcmp("aiueo", "1iueo", 5));
-//     printf("library : %d\n", memcmp("aiueo", "1iueo", 5));
+// 	char	str1[] = "Hello, World!";
+// 	char	str2[] = "Hello, World!";
+// 	char	str3[] = "Hello, Xorld!";
+
+// 	printf("Compare str1 and str2: %d\n", ft_memcmp(str1, str2, strlen(str1)));
+// 	printf("Compare str1 and str3: %d\n", ft_memcmp(str1, str3, strlen(str1)));
 // 	return (0);
 // }

@@ -1,38 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/23 17:53:24 by ksaegusa          #+#    #+#             */
-/*   Updated: 2024/10/26 13:18:38 by ksaegusa         ###   ########.fr       */
+/*   Created: 2024/12/05 15:48:04 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/12/05 16:20:24 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <strings.h>
+#include "libft.h"
 
-void	ft_bzero(void *s, size_t n)
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	unsigned char	*ptr;
+	t_list	*new;
+	t_list	*node;
 
-	ptr = (unsigned char *)s;
-	while (n > 0)
+	if (!f || !lst)
+		return (NULL);
+	new = NULL;
+	while (lst)
 	{
-		*ptr = 0;
-		ptr++;
-		n--;
+		node = ft_lstnew(f(lst->content));
+		if (!node)
+		{
+			ft_lstclear(&node, (*del));
+			return (NULL);
+		}
+		ft_lstadd_back(&new, node);
+		lst = lst->next;
 	}
+	return (new);
 }
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char str[50] = "Hello, World!";
-
-// 	printf("Before bzero: %s\n", str);
-// 	ft_bzero(str + 7, 6);
-// 	printf("After bzero: %s\n", str);
-
-// 	return (0);
-// }

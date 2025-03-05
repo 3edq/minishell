@@ -3,44 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 12:02:13 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/26 21:31:38 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 18:05:46 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/28 19:54:02 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <unistd.h>
 
 void	ft_putnbr_fd(int n, int fd)
 {
+	char	c;
+
 	if (n == -2147483648)
 	{
-		ft_putchar_fd('-', fd);
-		ft_putchar_fd('2', fd);
-		ft_putnbr_fd(147483648, fd);
+		write(fd, "-2147483648", 11);
+		return ;
 	}
-	else if (n < 0)
+	if (n < 0)
 	{
-		ft_putchar_fd('-', fd);
-		ft_putnbr_fd((n * -1), fd);
+		write(fd, "-", 1);
+		n = -n;
 	}
-	else if (n > 9)
+	if (n > 9)
 	{
-		ft_putnbr_fd((n / 10), fd);
-		ft_putnbr_fd((n % 10), fd);
+		ft_putnbr_fd(n / 10, fd);
 	}
-	else
-		ft_putchar_fd((n % 10) + '0', fd);
+	c = (n % 10) + '0';
+	write(fd, &c, 1);
 }
-
-// int main()
+// int	main(void)
 // {
-//     int test_numbers[] = {42, -42, 0, 12345, -6789};
-//     for (size_t i = 0; i < 5; i++)
-//     {
-//         ft_putnbr_fd(test_numbers[i], 1);
-//         ft_putchar_fd('\n', 1);
-//     }
-//     return 0;
+// 	ft_putnbr_fd(12345, 1);
+// 	write(1, "\n", 1);
+// 	ft_putnbr_fd(-12345, 1);
+// 	write(1, "\n", 1);
+// 	return (0);
 // }

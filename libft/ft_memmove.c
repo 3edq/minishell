@@ -3,50 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 14:02:28 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 12:18:11 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:44 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/29 14:36:56 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	size_t	i;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	i = 0;
-	if (dest == NULL || src == NULL || !n)
-	{
+	d = (unsigned char *)dest;
+	s = (const unsigned char *)src;
+	if (!dest || !src)
+		return (NULL);
+	if (d == s)
 		return (dest);
-	}
-	if (dest < src)
+	if (d < s)
 	{
-		while (i < n)
-		{
-			*((char *)dest + i) = *((char *)src + i);
-			i++;
-		}
+		while (n--)
+			*d++ = *s++;
 	}
 	else
 	{
-		while (n > 0)
+		d += n;
+		s += n;
+		while (n--)
 		{
-			*((char *)dest + n - 1) = *((char *)src + n - 1);
-			n--;
+			*(--d) = *(--s);
 		}
 	}
 	return (dest);
 }
 
-// int main()
+// #include <stdio.h>
+
+// int	main(void)
 // {
-// 	char str31[] = "abcdefghijklmnopqrstu";
-//     char str32[] = "abcdefghijklmnopqrstu";
-//     ft_memmove(str31 + 5, str31, 10);
-//     memmove(str32 + 5, str32, 10);
-//     printf("zisaku  : %s\n", str31);
-//     printf("library : %s\n", str32);
+// 	char	str[] = "Hello, World!";
+
+// 	printf("Before memmove: %s\n", str);
+// 	ft_memmove(str + 6, str, 6);
+// 	printf("After memmove: %s\n", str);
 // 	return (0);
 // }

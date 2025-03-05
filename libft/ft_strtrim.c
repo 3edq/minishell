@@ -3,43 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 13:02:47 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/25 18:19:44 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/24 13:09:47 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/28 17:36:32 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stddef.h>
+#include <stdlib.h>
 
 char	*ft_strtrim(char const *s1, char const *set)
 {
+	size_t	start;
+	size_t	end;
+	char	*trimmed_str;
 	size_t	i;
 
 	if (!s1 || !set)
 		return (NULL);
-	while (*s1 && ft_strchr(set, *s1) != NULL)
-		s1++;
-	i = ft_strlen(s1);
-	while (i > 0 && ft_strchr(set, s1[i]) != NULL)
-		i--;
-	return (ft_substr(s1, 0, i + 1));
+	start = 0;
+	end = ft_strlen(s1);
+	while (s1[start] && ft_strchr(set, s1[start]))
+		start++;
+	while (end > start && ft_strchr(set, s1[end - 1]))
+		end--;
+	trimmed_str = (char *)malloc(end - start + 1);
+	if (!trimmed_str)
+		return (NULL);
+	i = 0;
+	while (start < end)
+	{
+		trimmed_str[i++] = s1[start++];
+	}
+	trimmed_str[i] = '\0';
+	return (trimmed_str);
 }
 
-// int main()
+// #include <stdio.h>
+
+// int	main(void)
 // {
-//     const char *test_string = "!!Hello, World!!";
-//     const char *set = "! ";
-//     char *trimmed_string = ft_strtrim(test_string, set);
-//     if (trimmed_string)
-//     {
-//         printf("Original string: '%s'\n", test_string);
-//         printf("Trimmed string: '%s'\n", trimmed_string);
-//         free(trimmed_string);
-//     }
-//     else
-//     {
-//         printf("Memory allocation failed.\n");
-//     }
-//     return 0;
+// 	const char *str = "Hello, World!";
+// 	const char *set = "Hd!";
+// 	char *result;
+
+// 	result = ft_strtrim(str, set);
+// 	if (result)
+// 	{
+// 		printf("Trimmed string: %s\n", result);
+// 		free(result);
+// 	}
+// 	else
+// 	{
+// 		printf("Failed to trim\n");
+// 	}
+// 	return (0);
 // }

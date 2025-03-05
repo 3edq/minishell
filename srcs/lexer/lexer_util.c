@@ -2,9 +2,6 @@
 
 int	is_space(char c)
 {
-	int	i;
-
-	i = 0;
 	if (c == ' ' || (c >= 9 && c <= 13))
 		return (1);
 	else
@@ -18,22 +15,22 @@ int	skip_spaces(char *str, int i)
 	return (i);
 }
 
-int count_quotes(int i, char *str)
+int	count_quotes(int i, char *str)
 {
-    char quote;
-    int  j;
+	char	quote;
+	int		j;
 
-    if (!str[i])
-        return (0);
-    quote = str[i];
-    j = 1;
-    while (str[i + j])
-    {
-        if (str[i + j] == quote)
-            return (j + 1);
-        j++;
-    }
-    return (-1);
+	if (!str[i])
+		return (0);
+	quote = str[i];
+	j = 1;
+	while (str[i + j])
+	{
+		if (str[i + j] == quote)
+			return (j + 1);
+		j++;
+	}
+	return (-1);
 }
 
 int	add_lexer_node(char *str, int token, t_lexer **lexer_list)

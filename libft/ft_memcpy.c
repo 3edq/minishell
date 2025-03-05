@@ -3,28 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 13:45:48 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 12:11:49 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:48 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/11/01 12:46:26 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	size_t	i;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	i = 0;
-	if (dest == NULL || src == NULL || !n)
-	{
+	if (n == 0 || dest == src)
 		return (dest);
-	}
-	while (i < n)
+	if (!dest || !src)
+		return (NULL);
+	d = (unsigned char *)dest;
+	s = (const unsigned char *)src;
+	while (n > 0)
 	{
-		*((char *)dest + i) = *((char *)src + i);
-		i++;
+		*d = *s;
+		d++;
+		s++;
+		n--;
 	}
 	return (dest);
 }
+
+// #include <stdio.h>
+
+// int	main(void)
+// {
+// 	char	source[] = "Hello, memcpy!";
+// 	char	destination[20];
+
+// 	ft_memcpy(destination, source, sizeof(source));
+// 	printf("%s\n", destination);
+// 	return (0);
+// }

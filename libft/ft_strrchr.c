@@ -3,46 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 16:29:04 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 11:47:20 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:51:12 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 15:14:36 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
-char	*ft_strrchr(const char *str, int c)
+char	*ft_strrchr(const char *s, int c)
 {
-	int	search;
+	const char	*last = NULL;
 
+	if (!s)
+		return (NULL);
+	while (*s != '\0')
+	{
+		if (*s == (char)c)
+		{
+			last = s;
+		}
+		s++;
+	}
 	if (c == '\0')
 	{
-		return ((char *)(str + ft_strlen(str)));
+		return ((char *)s);
 	}
-	search = ft_strlen((char *)str) + 1;
-	while (search--)
-	{
-		if (*(str + search) == (char)c)
-			return ((char *)(str + search));
-	}
-	return (NULL);
+	return ((char *)last);
 }
+// #include <stdio.h>
 
-// int main()
+// char	*ft_strrchr(const char *s, int c);
+
+// int	main(void)
 // {
-// 	char a[] = "aiueo";
-//     printf("zisaku  : %s\n", ft_strrchr(a, 'a'));
-//     printf("library : %s\n", strrchr(a, 'a'));
-//     printf("zisaku  : %s\n", ft_strrchr(a, 'i'));
-//     printf("library : %s\n", strrchr(a, 'i'));
-//     printf("zisaku  : %s\n", ft_strrchr(a, 'u'));
-//     printf("library : %s\n", strrchr(a, 'u'));
-//     printf("zisaku  : %s\n", ft_strrchr(a, 'e'));
-//     printf("library : %s\n", strrchr(a, 'e'));
-//     printf("zisaku  : %s\n", ft_strrchr(a, 'o'));
-//     printf("library : %s\n", strrchr(a, 'o'));
-//     printf("zisaku  : %s\n", ft_strrchr(a, 0));
-//     printf("library : %s\n", strrchr(a, 0));
+// 	const char	*str = "Hello, world!";
+// 	char		c;
+// 	char		*result;
+
+// 	c = 'o';
+// 	result = ft_strrchr(str, c);
+// 	if (result)
+// 		printf("Last occurrence of '%c': %s\n", c, result);
+// 	else
+// 		printf("Character '%c' not found\n", c);
 // 	return (0);
 // }

@@ -3,85 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 11:25:04 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/31 06:58:15 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:53:34 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/29 13:20:36 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-static int	check_flow(long num, int sign, long next)
-{
-	if ((num * sign) > (LONG_MAX / 10))
-		return ((int)LONG_MAX);
-	if ((num * sign) == (LONG_MAX / 10) && next > (LONG_MAX % 10))
-		return ((int)LONG_MAX);
-	if ((num * sign) < (LONG_MIN / 10))
-		return ((int)LONG_MIN);
-	if ((num * sign) == (LONG_MIN / 10) && next < (LONG_MIN % 10))
-		return ((int)LONG_MIN);
-	return (21);
-}
-
-static long	make_num(const char *str, long sign)
-{
-	long	num;
-
-	if (*str >= '0' && *str <= '9')
-	{
-		num = *str - '0';
-		str++;
-		while (*str && *str >= '0' && *str <= '9')
-		{
-			num *= 10;
-			if (check_flow(num, sign, *str - '0') != 21)
-				return (check_flow(num, sign, *str - '0'));
-			num += *str - '0';
-			str++;
-		}
-		return ((int)(num * sign));
-	}
-	return (0);
-}
-
 int	ft_atoi(const char *str)
 {
-	long	sign;
+	int					i;
+	int					sign;
+	unsigned long int	convert;
 
+	i = 0;
 	sign = 1;
-	while (*str == ' ' || (*str >= 9 && *str <= 13))
-		str++;
-	if (*str == '-')
+	convert = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-')
 	{
-		sign *= -1;
-		str++;
+		sign = -1;
+		i++;
 	}
-	else if (*str == '+')
-		str++;
-	return (make_num(str, sign));
+	else if (str[i] == '+')
+		i++;
+	while (str[i] != '\0' && (str[i] >= '0' && str[i] <= '9'))
+	{
+		convert = convert * 10 + str[i] - '0';
+		i++;
+	}
+	return (convert * sign);
 }
+// #include <stdio.h>
+// #include <stdlib.h>
 
-// int main()
+// int	main(void)
 // {
-// 	char    str91[] = "-a-5";
-//     printf("zisaku  : %d\n", ft_atoi(str91));
-//     printf("library : %d\n", atoi(str91));
-//     char    str92[] = "-100";
-//     printf("zisaku  : %d\n", ft_atoi(str92));
-//     printf("library : %d\n", atoi(str92));
-//     char    str93[] = "1000321";
-//     printf("zisaku  : %d\n", ft_atoi(str93));
-//     printf("library : %d\n", atoi(str93));
-//     char    str94[] = "2147483648";
-//     printf("zisaku  : %d\n", ft_atoi(str94));
-//     printf("library : %d\n", atoi(str94));
-//     char    str95[] = "-2147483649";
-//     printf("zisaku  : %d\n", ft_atoi(str95));
-//     printf("library : %d\n", atoi(str95));
-// 	char    str96[] = "9223372036854775807";
-//     printf("zisaku  : %d\n", ft_atoi(str95));
-//     printf("library : %d\n", atoi(str95));
-// 	return (0);
+// 	char str[] = "-42";
+
+// 	printf("%d\n", ft_atoi(str));
 // }

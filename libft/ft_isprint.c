@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isprint.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 12:53:20 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/29 16:34:25 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:53:01 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/26 14:08:29 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
 int	ft_isprint(int c)
 {
-	if (32 <= c && c <= 126)
-	{
+	if (c >= 32 && c <= 126)
 		return (1);
-	}
 	return (0);
 }
+// #include <stdio.h>
 
-// int main()
+// int	ft_isprint(int c);
+
+// int	main(void)
 // {
-// 	printf("library :%d\n", isprint('2'));
-//     printf("zisaku  :%d\n", ft_isprint('2'));
-//     printf("library :%d\n", isprint('\t'));
-//     printf("zisaku  :%d\n", ft_isprint('\t'));
-//     printf("library :%d\n", isprint('\n'));
-//     printf("zisaku  :%d\n", ft_isprint('\n'));
+// 	printf("'z' is printable: %d\n", ft_isprint('z'));
+// 	printf("'A' is printable: %d\n", ft_isprint('A'));
+// 	printf("' ' is printable: %d\n", ft_isprint(' '));
+// 	printf("'~' is printable: %d\n", ft_isprint('~'));
+// 	printf("127 is printable: %d\n", ft_isprint(127));
+// 	printf("31 is printable: %d\n", ft_isprint(31));
+// 	printf("Newline is printable: %d\n", ft_isprint('\n'));
 // 	return (0);
 // }

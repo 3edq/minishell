@@ -3,42 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/22 16:12:12 by enkwak            #+#    #+#             */
-/*   Updated: 2024/11/01 11:50:15 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:52:26 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/30 13:31:38 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <string.h>
 
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(const char *s, int c)
 {
-	while (*str)
+	if (!s)
+		return (NULL);
+	while (*s != '\0')
 	{
-		if (*str == (char)c)
-			return ((char *)str);
-		str++;
+		if (*s == (char)c)
+		{
+			return ((char *)s);
+		}
+		s++;
 	}
 	if (c == '\0')
-		return ((char *)str);
+	{
+		return ((char *)s);
+	}
 	return (NULL);
 }
+// #include <stdio.h>
 
-// int main()
+// int	main(void)
 // {
-// 	char str71[] ="nesugosita!!!";
-//     char str72[] ="nesugosita!!!";
-//     printf("zisaku  : %s\n", ft_strchr(str71, 103));
-//     printf("library : %s\n", strchr(str72, 103));
-//     char str73[] = "aiueo";
-//     printf("zisaku  : %s\n", ft_strchr(str73, 'a'));
-//     printf("library : %s\n", strchr(str73, 'a'));
-//     printf("zisaku  : %s\n", ft_strchr(str73, 'i'));
-//     printf("library : %s\n", strchr(str73, 'i'));
-//     printf("zisaku  : %s\n", ft_strchr(str73, 'u'));
-//     printf("library : %s\n", strchr(str73, 'u'));
-//     printf("zisaku  : %s\n", ft_strchr(str73, 'e'));
-//     printf("library : %s\n", strchr(str73, 'e'));
+// 	const char	*str = "Hello, world!";
+// 	char		c;
+// 	char		*result;
+
+// 	c = 'o';
+// 	result = ft_strchr(str, c);
+// 	if (result)
+// 		printf("First occurrence of '%c': %s\n", c, result);
+// 	else
+// 		printf("Character '%c' not found\n", c);
 // 	return (0);
 // }

@@ -56,7 +56,6 @@ char	*expand_string(const char *input, int exit_status)
 	char	*result;
 	char	*temp;
 	size_t	i;
-	size_t	start;
 	char	var[256];
 	size_t	j;
 	char	ch[2];
@@ -105,7 +104,6 @@ char	*expand_string(const char *input, int exit_status)
 			}
 			else
 			{
-				start = i;
 				j = 0;
 				while (input[i] && (ft_strchr(" \t\n$\"'", input[i]) == NULL) && j < 255)
 					var[j++] = input[i++];

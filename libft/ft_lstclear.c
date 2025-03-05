@@ -1,38 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*   ft_lstclear.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/23 17:53:24 by ksaegusa          #+#    #+#             */
-/*   Updated: 2024/10/26 13:18:38 by ksaegusa         ###   ########.fr       */
+/*   Created: 2024/12/05 15:45:10 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/12/05 15:58:59 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <strings.h>
+#include "libft.h"
 
-void	ft_bzero(void *s, size_t n)
+void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
-	unsigned char	*ptr;
+	t_list	*node;
 
-	ptr = (unsigned char *)s;
-	while (n > 0)
+	if (!lst)
+		return ;
+	while (*lst)
 	{
-		*ptr = 0;
-		ptr++;
-		n--;
+		node = (*lst)->next;
+		ft_lstdelone(*lst, del);
+		*lst = node;
 	}
 }
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char str[50] = "Hello, World!";
-
-// 	printf("Before bzero: %s\n", str);
-// 	ft_bzero(str + 7, 6);
-// 	printf("After bzero: %s\n", str);
-
-// 	return (0);
-// }

@@ -3,41 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/24 11:56:57 by enkwak            #+#    #+#             */
-/*   Updated: 2024/10/25 18:03:08 by enkwak           ###   ########.fr       */
+/*   Created: 2024/10/23 17:59:30 by ksaegusa          #+#    #+#             */
+/*   Updated: 2024/10/26 16:21:09 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <unistd.h>
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	int	i;
-
-	i = 0;
-	if (!s)
+	if (s == NULL)
 		return ;
-	while (s[i])
+	while (*s)
 	{
-		ft_putchar_fd(s[i], fd);
-		i++;
+		write(fd, s, 1);
+		s++;
 	}
 }
-
-// int main()
+// int	main(void)
 // {
-//     char *test_strings[] = {
-//         "Hello, World!",
-//         "This is a test.",
-//         "ft_putstr_fd works!",
-//         "Goodbye!\n",
-//         NULL
-//     };
-//     for (size_t i = 0; test_strings[i] != NULL; i++)
-//     {
-//         ft_putstr_fd(test_strings[i], 1);
-//     }
-//     return 0;
+// 	ft_putstr_fd("Hello, World!\n", 1);
+// 	return (0);
 // }
