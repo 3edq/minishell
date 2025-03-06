@@ -42,6 +42,7 @@ void	handle_heredoc_execution(t_command *cmd)
 
 	if (!cmd->delimiter)
 		return ;
+	g_shell_state = STATE_HEREDOC;
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
@@ -55,6 +56,7 @@ void	handle_heredoc_execution(t_command *cmd)
 	}
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		close(pipefd[0]);
 		while (1)
 		{
@@ -78,4 +80,5 @@ void	handle_heredoc_execution(t_command *cmd)
 		dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[0]);
 	}
+	g_shell_state = STATE_INTERACTIVE;
 }

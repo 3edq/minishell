@@ -6,7 +6,7 @@ int	builtin_exit(char **args)
 
 	if (args[1])
 	{
-		exit_status = ft_atoi(args[1]);
+		exit_status = ft_atoi(args[1]); //atoiだとダメ
 		if (exit_status == 0 && args[1][0] != '0')
 		{
 			ft_putstr_fd("minishell: exit: numeric argument required\n",
