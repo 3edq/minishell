@@ -102,10 +102,12 @@ char	*expand_string(const char *input, int exit_status)
 				free(temp);
 				i++;
 			}
+			else if (input[i] == '$')
+				i++;
 			else
 			{
 				j = 0;
-				while (input[i] && (ft_strchr(" \t\n$\"'", input[i]) == NULL) && j < 255)
+				while (input[i] && (ft_strchr(" \t\n\"'", input[i]) == NULL) && j < 255)
 					var[j++] = input[i++];
 				var[j] = '\0';
 				temp = expand_variable(var);

@@ -1,6 +1,6 @@
 #include "../include/minishell.h"
 
-volatile t_shell_state g_shell_state = STATE_INTERACTIVE;
+volatile t_shell_state g_shell_state;
 
 void	free_env(char **envp)
 {

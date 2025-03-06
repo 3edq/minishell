@@ -13,7 +13,7 @@ LIBFT_SRCS = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
 	ft_lstiter.c ft_lstsize.c ft_lstadd_front.c ft_lstadd_back.c ft_lstdelone.c ft_lstclear.c \
        get_next_line.c
 
-PRINTF_SRCS = printf/src/ft_base.c printf/src/ft_printf.c printf/src/ft_util.c 
+# PRINTF_SRCS = printf/src/ft_base.c printf/src/ft_printf.c printf/src/ft_util.c 
 
 SRCS = $(LIBFT_SRCS) $(PRINTF_SRCS)
 
