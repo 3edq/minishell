@@ -82,7 +82,8 @@ void	free_tools(t_tools *tools)
 	free_lexer_list(tools->lexer_list);
 	free(tools->args);
 }
-void	expand_command(t_command *cmd_list, int exit_status)
+
+int	expand_command(t_command *cmd_list, int exit_status)
 {
     t_command	*cmd;
     int			i;
@@ -96,16 +97,14 @@ void	expand_command(t_command *cmd_list, int exit_status)
         {
             expanded_arg = expand_string(cmd->args[i], exit_status);
             if (!expanded_arg)
-            {
-                fprintf(stderr, "Memory allocation error in expander\n");
-                return;
-            }
+                return (1);
             free(cmd->args[i]);
             cmd->args[i] = expanded_arg;
             i++;
         }
         cmd = cmd->next;
     }
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -147,7 +146,8 @@ int	main(int argc, char **argv, char **envp)
 			free_tools(&tools);
 			continue ;
 		}
-		expand_command(cmd_list, last_exit_status);
+		if (expand_command(cmd_list, last_exit_status))
+			continue ;
 		if (cmd_list->args && ft_strcmp(cmd_list->args[0], "exit") == 0)
 		{
 			if (cmd_list->args[1])

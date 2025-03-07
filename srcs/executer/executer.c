@@ -1,10 +1,11 @@
-#include "../../include/minishell.h"
+#include "../include/minishell.h"
 
 void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 {
 	char	*cmd_path;
 	int		original_stdin;
 	int		original_stdout;
+	DIR		*dir;
 
 	g_shell_state = STATE_EXECUTING;
 	if (cmd_list->next)
@@ -20,6 +21,19 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 			fprintf(stderr, "Error: Invalid command\n");
 			*status = 127;
 			return ;
+		}
+		if (cmd_list->args[0][0] == '/' || cmd_list->args[0][0] == '.')
+		{
+			dir = opendir(cmd_list->args[0]);
+			if (dir)
+			{
+				closedir(dir);
+				ft_putstr_fd("bash: ", STDERR_FILENO);
+				ft_putstr_fd(cmd_list->args[0], STDERR_FILENO);
+				ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+				*status = 126;
+				return ;
+			}
 		}
 		if (is_builtin(cmd_list->args[0]))
 			*status = execute_builtin(cmd_list, envp);

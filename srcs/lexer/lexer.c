@@ -37,6 +37,8 @@ int	parse_special_token(char *str, int i, t_lexer **lexer_list)
 	return (0);
 }
 
+
+
 int	parse_word_token(char *str, int i, t_lexer **lexer_list)
 {
 	int		j;
