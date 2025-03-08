@@ -46,7 +46,6 @@ char	*generate_heredoc_filename(void)
 	free(num);
 	return (filename);
 }
-
 void	handle_heredoc_execution(t_command *cmd)
 {
 	int		fd;
@@ -54,6 +53,7 @@ void	handle_heredoc_execution(t_command *cmd)
 	char	*line;
 	int		status;
 	char	*tmp_filename;
+	int		capturing = 0;
 
 	if (!cmd->delimiter)
 		return ;
@@ -85,10 +85,25 @@ void	handle_heredoc_execution(t_command *cmd)
 		while (1)
 		{
 			line = readline("> ");
-			if (!line || ft_strcmp(line, cmd->delimiter) == 0)
+			if (!line)
+			{
+				break;
+			}
+			if (!capturing && cmd->prev_delimiter)
+			{
+				if (ft_strcmp(line, cmd->prev_delimiter) == 0)
+				{
+					capturing = 1;
+					free(line);
+					continue;
+				}
+				free(line);
+				continue;
+			}
+			if (ft_strcmp(line, cmd->delimiter) == 0)
 			{
 				free(line);
-				break ;
+				break;
 			}
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);

@@ -12,6 +12,7 @@ typedef struct s_command
 	char				*input_file;
 	char				*output_file;
 	char				*delimiter;
+	char				*prev_delimiter;
 	int					append;
 	struct s_command	*next;
 }						t_command;

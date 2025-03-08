@@ -92,7 +92,6 @@ static void	delete_quotes(char *str, char quote)
 	strcpy(str, new_str); //strcpyを使用
 	free(new_str);
 }
-
 static int	handle_heredoc(t_lexer **lexer, t_command *current)
 {
 	char	*delimiter;
@@ -107,12 +106,19 @@ static int	handle_heredoc(t_lexer **lexer, t_command *current)
 	delimiter = ft_strdup((*lexer)->next->str);
 	if (!delimiter)
 		return (-1);
-	if ((delimiter[0] == '"' && delimiter[ft_strlen(delimiter) - 1] == '"')
-		|| (delimiter[0] == '\'' && delimiter[ft_strlen(delimiter)
-			- 1] == '\''))
+	if ((delimiter[0] == '"' && ft_strlen(delimiter) > 1 &&
+		 delimiter[ft_strlen(delimiter) - 1] == '"')
+		|| (delimiter[0] == '\'' && ft_strlen(delimiter) > 1 &&
+		 delimiter[ft_strlen(delimiter) - 1] == '\''))
 	{
 		delete_quotes(delimiter, '"');
 		delete_quotes(delimiter, '\'');
+	}
+	if (current->delimiter)
+	{
+		if (current->prev_delimiter)
+			free(current->prev_delimiter);
+		current->prev_delimiter = current->delimiter;
 	}
 	current->delimiter = delimiter;
 	*lexer = (*lexer)->next->next;

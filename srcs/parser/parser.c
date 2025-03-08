@@ -13,6 +13,7 @@ t_command	*new_command(void)
 	cmd->output_file = NULL;
 	cmd->append = 0;
 	cmd->delimiter = NULL;
+	cmd->prev_delimiter = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }
