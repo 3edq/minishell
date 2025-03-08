@@ -33,31 +33,55 @@ void	handle_redirections(t_command *cmd)
 	}
 }
 
+char	*generate_heredoc_filename(void)
+{
+	static int	i = 0;
+	char		*num;
+	char		*filename;
+
+	num = ft_itoa(i++);
+	if (!num)
+		return (NULL);
+	filename = ft_strjoin("/tmp/minishell_heredoc_file_", num);
+	free(num);
+	return (filename);
+}
+
 void	handle_heredoc_execution(t_command *cmd)
 {
-	int		pipefd[2];
+	int		fd;
 	pid_t	pid;
 	char	*line;
 	int		status;
+	char	*tmp_filename;
 
 	if (!cmd->delimiter)
 		return ;
 	g_shell_state = STATE_HEREDOC;
-	if (pipe(pipefd) == -1)
+	tmp_filename = generate_heredoc_filename();
+	if (!tmp_filename)
 	{
-		perror("pipe");
+		perror("generate_heredoc_filename");
+		return ;
+	}
+	fd = open(tmp_filename, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		perror("open");
+		free(tmp_filename);
 		return ;
 	}
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
+		close(fd);
+		free(tmp_filename);
 		return ;
 	}
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		close(pipefd[0]);
 		while (1)
 		{
 			line = readline("> ");
@@ -66,19 +90,28 @@ void	handle_heredoc_execution(t_command *cmd)
 				free(line);
 				break ;
 			}
-			write(pipefd[1], line, ft_strlen(line));
-			write(pipefd[1], "\n", 1);
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
 			free(line);
 		}
-		close(pipefd[1]);
+		close(fd);
 		exit(0);
 	}
 	else
 	{
 		waitpid(pid, &status, 0);
-		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
+		close(fd);
+		fd = open(tmp_filename, O_RDONLY);
+		if (fd == -1)
+		{
+			perror("open for reading");
+			free(tmp_filename);
+			return ;
+		}
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+		unlink(tmp_filename);
+		free(tmp_filename);
 	}
 	g_shell_state = STATE_INTERACTIVE;
 }
