@@ -8,7 +8,13 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 
 	g_shell_state = STATE_EXECUTING;
 	if (cmd_list->next)
+	{
+		if (cmd_list->delimiter)
+		{
+			handle_heredoc_execution(cmd_list);
+		}
 		execute_pipeline(cmd_list, envp, status);
+	}
 	else
 	{
 		original_stdin = dup(STDIN_FILENO);
