@@ -92,36 +92,34 @@ static void	delete_quotes(char *str, char quote)
 	strcpy(str, new_str); // strcpyを使用
 	free(new_str);
 }
-static int handle_heredoc(t_lexer **lexer, t_command *current)
+static int	handle_heredoc(t_lexer **lexer, t_command *current)
 {
-    char *delimiter;
+	char	*delimiter;
 
-    if ((*lexer)->token != HEREDOC)
-        return (0);
-    if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
-    {
-        fprintf(stderr, "Syntax error: expected delimiter after <<\n");
-        return (-1);
-    }
-    delimiter = ft_strdup((*lexer)->next->str);
-    if (!delimiter)
-        return (-1);
-    if ((delimiter[0] == '"' && ft_strlen(delimiter) > 1 &&
-         delimiter[ft_strlen(delimiter) - 1] == '"')
-        || (delimiter[0] == '\'' && ft_strlen(delimiter) > 1 &&
-         delimiter[ft_strlen(delimiter) - 1] == '\''))
-    {
-        delete_quotes(delimiter, '"');
-        delete_quotes(delimiter, '\'');
-    }
-    
-    // 前のデリミタがあれば解放
-    if (current->delimiter)
-        free(current->delimiter);
-    
-    current->delimiter = delimiter;
-    *lexer = (*lexer)->next->next;
-    return (1);
+	if ((*lexer)->token != HEREDOC)
+		return (0);
+	if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
+	{
+		fprintf(stderr, "Syntax error: expected delimiter after <<\n");
+		return (-1);
+	}
+	delimiter = ft_strdup((*lexer)->next->str);
+	if (!delimiter)
+		return (-1);
+	if ((delimiter[0] == '"' && ft_strlen(delimiter) > 1
+			&& delimiter[ft_strlen(delimiter) - 1] == '"')
+		|| (delimiter[0] == '\'' && ft_strlen(delimiter) > 1
+			&& delimiter[ft_strlen(delimiter) - 1] == '\''))
+	{
+		delete_quotes(delimiter, '"');
+		delete_quotes(delimiter, '\'');
+	}
+	// 前のデリミタがあれば解放
+	if (current->delimiter)
+		free(current->delimiter);
+	current->delimiter = delimiter;
+	*lexer = (*lexer)->next->next;
+	return (1);
 }
 
 int	which_redirect(t_lexer **lexer_list, t_command *current)

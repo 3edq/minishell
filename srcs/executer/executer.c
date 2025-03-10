@@ -1,5 +1,21 @@
 #include "../../include/minishell.h"
 
+void	process_all_heredocs(t_command *cmd_list)
+{
+	t_command	*tmp;
+	int			saved_stdin;
+
+	saved_stdin = dup(STDIN_FILENO);
+	tmp = cmd_list;
+	while (tmp)
+	{
+		if (tmp->delimiter)
+			handle_heredoc_execution(tmp);
+		tmp = tmp->next;
+	}
+	dup2(saved_stdin, STDIN_FILENO);
+	close(saved_stdin);
+}
 void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 {
 	char	*cmd_path;
