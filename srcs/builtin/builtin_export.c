@@ -28,16 +28,38 @@ char	*ft_strtok(char *str, const char *delim)
 	return (token_start);
 }
 
+static int	is_valid_identifier(const char *arg)
+{
+	int	i;
+
+	if (!arg || !arg[0])
+		return (0);
+	if (!(ft_isalpha(arg[0]) || arg[0] == '_'))
+		return (0);
+	i = 1;
+	while (arg[i] && arg[i] != '=')
+	{
+		if (!(ft_isalnum(arg[i]) || arg[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	builtin_export(char ***envp, char *arg)
 {
 	int		i;
 	char	**new_env;
 	char	*key;
 	size_t	len;
+	int		append_mode;
 
-	if (!arg || !ft_strchr(arg, '='))
-		return (ft_putstr_fd("minishell: export: invalid argument\n",
-				STDERR_FILENO), 1);
+	if (!is_valid_identifier(arg))
+	{
+		ft_putstr_fd(" not a valid identifier\n", STDERR_FILENO);
+		return (1);
+	}
+	append_mode = 0;
 	key = ft_strtok(arg, "=");
 	len = ft_strlen(key);
 	i = 0;
@@ -62,3 +84,58 @@ int	builtin_export(char ***envp, char *arg)
 	*envp = new_env;
 	return (0);
 }
+
+// int	builtin_export(char ***envp, char *arg)
+// {
+// 	int		i;
+// 	char	**new_env;
+// 	char	*key;
+// 	char	*value;
+// 	size_t	len;
+// 	int		append_mode;
+
+// 	if (!is_valid_identifier(arg))
+// 	{
+// 		ft_putstr_fd(" not a valid identifier\n", STDERR_FILENO);
+// 		return (1);
+// 	}
+// 	append_mode = 0;
+// 	key = ft_strdup(arg);
+// 	value = ft_strchr(key, '=');
+// 	if (value)
+// 	{
+// 		*value = '\0';
+// 		value++;
+// 	}
+// 	len = ft_strlen(key);
+// 	i = 0;
+// 	while ((*envp)[i])
+// 	{
+// 		if (!ft_strncmp((*envp)[i], key, len) && (*envp)[i][len] == '=')
+// 		{
+// 			free((*envp)[i]);
+// 			(*envp)[i] = ft_strdup(arg);
+// 			free(key);
+// 			return (0);
+// 		}
+// 		i++;
+// 	}
+// 	new_env = malloc(sizeof(char *) * (i + 2));
+// 	if (!new_env)
+// 	{
+// 		free(key);
+// 		return (1);
+// 	}
+// 	i = 0;
+// 	while ((*envp)[i])
+// 	{
+// 		new_env[i] = (*envp)[i];
+// 		i++;
+// 	}
+// 	new_env[i] = ft_strdup(arg);
+// 	new_env[i + 1] = NULL;
+// 	free(*envp);
+// 	*envp = new_env;
+// 	free(key);
+// 	return (0);
+// }

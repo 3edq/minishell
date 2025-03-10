@@ -46,6 +46,8 @@ int	execute_builtin(t_command *cmd, char ***envp)
 	{
 		if (cmd->args[1])
 			return (builtin_unset(envp, cmd->args[1]));
+		else
+			return (0);
 	}
 	return (-1);
 }

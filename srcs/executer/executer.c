@@ -18,8 +18,8 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 		handle_heredoc_execution(cmd_list);
 		if (!cmd_list->args || !cmd_list->args[0])
 		{
-			fprintf(stderr, "Error: Invalid command\n");
-			*status = 127;
+			// fprintf(stderr, "Error: Invalid command\n");
+			*status = 0;
 			return ;
 		}
 		if (cmd_list->args[0][0] == '/' || cmd_list->args[0][0] == '.')
