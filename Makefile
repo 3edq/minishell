@@ -28,6 +28,7 @@ SRCS = $(SRC_DIR)/main.c \
        $(EXECUTER_DIR)/path.c \
        $(EXECUTER_DIR)/pipe.c \
        $(EXECUTER_DIR)/redirect.c \
+       $(EXECUTER_DIR)/heredoc.c \
        $(EXPANDER_DIR)/expander.c \
        $(SIGNAL_DIR)/signals.c
 

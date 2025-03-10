@@ -1,10 +1,9 @@
 #include "../../include/minishell.h"
 
-static void child_process(t_command *cmd, char ***envp, int *status, int *pipe_fd)
+static void	child_process(t_command *cmd, char ***envp, int *status,
+		int *pipe_fd)
 {
-	// ヒアドキュメントを適用
 	apply_heredoc(cmd);
-	
 	handle_redirections(cmd);
 	if (cmd->next && !cmd->output_file)
 	{
@@ -19,7 +18,6 @@ static void child_process(t_command *cmd, char ***envp, int *status, int *pipe_f
 	exit(*status);
 }
 
-// パイプラインの親プロセス処理
 static void parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
 {
 	int exit_code;
@@ -37,7 +35,6 @@ static void parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
 		*status = 1;
 }
 
-// パイプラインの実行
 void execute_pipeline(t_command *cmd, char ***envp, int *status)
 {
 	int     pipe_fd[2];

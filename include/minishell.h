@@ -29,6 +29,7 @@ typedef enum e_shell_state {
 
 extern volatile t_shell_state g_shell_state;
 
+void	process_all_heredocs(t_command *cmd_list);
 char	**copy_env(char **envp);
 void	free_env(char **envp);
 void	free_commands(t_command *cmd);
