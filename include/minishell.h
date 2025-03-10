@@ -22,9 +22,9 @@
 # include <signal.h>
 
 typedef enum e_shell_state {
-	STATE_INTERACTIVE, //normal
-	STATE_HEREDOC,     //heredoc now
-	STATE_EXECUTING,   //command now
+	STATE_INTERACTIVE,
+	STATE_HEREDOC,
+	STATE_EXECUTING,
 }	t_shell_state;
 
 extern volatile t_shell_state g_shell_state;
@@ -34,7 +34,9 @@ void	free_env(char **envp);
 void	free_commands(t_command *cmd);
 void	free_lexer_list(t_lexer *lexer);
 void	free_tools(t_tools *tools);
-
+char	*generate_heredoc_filename(void);
+void	process_all_heredocs(t_command *cmd_list);
+void	apply_heredoc(t_command *cmd);
 void	setup_signal_handlers();
 
 #endif

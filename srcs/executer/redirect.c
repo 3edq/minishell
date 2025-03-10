@@ -46,6 +46,7 @@ char	*generate_heredoc_filename(void)
 	free(num);
 	return (filename);
 }
+
 void	handle_heredoc_execution(t_command *cmd)
 {
 	int		fd;
@@ -53,7 +54,6 @@ void	handle_heredoc_execution(t_command *cmd)
 	char	*line;
 	int		status;
 	char	*tmp_filename;
-	int		capturing = 0;
 
 	if (!cmd->delimiter)
 		return ;
@@ -87,23 +87,12 @@ void	handle_heredoc_execution(t_command *cmd)
 			line = readline("> ");
 			if (!line)
 			{
-				break;
-			}
-			if (!capturing && cmd->prev_delimiter)
-			{
-				if (ft_strcmp(line, cmd->prev_delimiter) == 0)
-				{
-					capturing = 1;
-					free(line);
-					continue;
-				}
-				free(line);
-				continue;
+				break ;
 			}
 			if (ft_strcmp(line, cmd->delimiter) == 0)
 			{
 				free(line);
-				break;
+				break ;
 			}
 			write(fd, line, ft_strlen(line));
 			write(fd, "\n", 1);
@@ -123,10 +112,20 @@ void	handle_heredoc_execution(t_command *cmd)
 			free(tmp_filename);
 			return ;
 		}
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		unlink(tmp_filename);
-		free(tmp_filename);
+		cmd->heredoc_fd = fd;
+		cmd->heredoc_filename = tmp_filename;
 	}
 	g_shell_state = STATE_INTERACTIVE;
+}
+void	process_all_heredocs(t_command *cmd_list)
+{
+	t_command	*tmp;
+
+	tmp = cmd_list;
+	while (tmp)
+	{
+		if (tmp->delimiter)
+			handle_heredoc_execution(tmp);
+		tmp = tmp->next;
+	}
 }

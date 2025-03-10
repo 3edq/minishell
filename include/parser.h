@@ -12,7 +12,9 @@ typedef struct s_command
 	char				*input_file;
 	char				*output_file;
 	char				*delimiter;
-	char				*prev_delimiter;
+	char				*heredoc_file;
+	int					heredoc_fd;
+	char				*heredoc_filename;
 	int					append;
 	struct s_command	*next;
 }						t_command;
@@ -25,6 +27,6 @@ int						which_redirect(t_lexer **lexer_list,
 							t_command *current);
 void					*ft_realloc(void *ptr, size_t new_size);
 t_command				*new_command(void);
-char	*expand_string(const char *input, int exit_status);
+char					*expand_string(const char *input, int exit_status);
 
 #endif

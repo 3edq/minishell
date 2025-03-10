@@ -13,7 +13,8 @@ t_command	*new_command(void)
 	cmd->output_file = NULL;
 	cmd->append = 0;
 	cmd->delimiter = NULL;
-	cmd->prev_delimiter = NULL;
+	cmd->heredoc_fd = -1;
+	cmd->heredoc_filename = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }

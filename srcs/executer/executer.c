@@ -1,32 +1,105 @@
 #include "../../include/minishell.h"
 
-void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
+void	apply_heredoc(t_command *cmd)
 {
-	char	*cmd_path;
-	int		original_stdin;
-	int		original_stdout;
+	if (cmd->heredoc_fd > 0)
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+		cmd->heredoc_fd = -1;
+		
+		if (cmd->heredoc_filename)
+		{
+			unlink(cmd->heredoc_filename);
+			free(cmd->heredoc_filename);
+			cmd->heredoc_filename = NULL;
+		}
+	}
+}
+
+void	prepare_heredoc(t_command *cmd)
+{
+	int		fd;
+	pid_t	pid;
+	char	*line;
+	int		status;
+
+	if (!cmd->delimiter)
+		return ;
+	cmd->heredoc_file = generate_heredoc_filename();
+	if (!cmd->heredoc_file)
+	{
+		perror("generate_heredoc_filename");
+		return ;
+	}
+	fd = open(cmd->heredoc_file, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		perror("open");
+		free(cmd->heredoc_file);
+		cmd->heredoc_file = NULL;
+		return ;
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
+		while (1)
+		{
+			line = readline("> ");
+			if (!line)
+				break ;
+			if (ft_strcmp(line, cmd->delimiter) == 0)
+			{
+				free(line);
+				break ;
+			}
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+			free(line);
+		}
+		close(fd);
+		exit(0);
+	}
+	else
+	{
+		waitpid(pid, &status, 0);
+		close(fd);
+	}
+}
+
+void judge_command_list(t_command *cmd_list, char ***envp, int *status)
+{
+	char *cmd_path;
+	int original_stdin;
+	int original_stdout;
 
 	g_shell_state = STATE_EXECUTING;
+	
+	// すべてのヒアドキュメントを事前処理
+	process_all_heredocs(cmd_list);
+	
 	if (cmd_list->next)
 	{
-		if (cmd_list->delimiter)
-		{
-			handle_heredoc_execution(cmd_list);
-		}
+		// パイプラインの場合
 		execute_pipeline(cmd_list, envp, status);
 	}
 	else
 	{
+		// 単一コマンドの場合
 		original_stdin = dup(STDIN_FILENO);
 		original_stdout = dup(STDOUT_FILENO);
+		
 		handle_redirections(cmd_list);
-		handle_heredoc_execution(cmd_list);
+		apply_heredoc(cmd_list);
+		
 		if (!cmd_list->args || !cmd_list->args[0])
 		{
 			fprintf(stderr, "Error: Invalid command\n");
 			*status = 127;
-			return ;
+			return;
 		}
+		
 		if (is_builtin(cmd_list->args[0]))
 			*status = execute_builtin(cmd_list, envp);
 		else
@@ -44,14 +117,15 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 				*status = 127;
 			}
 		}
+		
 		dup2(original_stdin, STDIN_FILENO);
 		dup2(original_stdout, STDOUT_FILENO);
 		close(original_stdin);
 		close(original_stdout);
 	}
+	
 	g_shell_state = STATE_INTERACTIVE;
 }
-
 void	execute_command(t_command *cmd, char ***envp, int *status)
 {
 	char	*path;

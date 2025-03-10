@@ -1,8 +1,10 @@
 #include "../../include/minishell.h"
 
-static void	child_process(t_command *cmd, char ***envp, int *status,
-		int *pipe_fd)
+static void child_process(t_command *cmd, char ***envp, int *status, int *pipe_fd)
 {
+	// ヒアドキュメントを適用
+	apply_heredoc(cmd);
+	
 	handle_redirections(cmd);
 	if (cmd->next && !cmd->output_file)
 	{
@@ -17,9 +19,10 @@ static void	child_process(t_command *cmd, char ***envp, int *status,
 	exit(*status);
 }
 
-static void	parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
+// パイプラインの親プロセス処理
+static void parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
 {
-	int	exit_code;
+	int exit_code;
 
 	if (cmd->next)
 	{
@@ -34,12 +37,13 @@ static void	parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
 		*status = 1;
 }
 
-void	execute_pipeline(t_command *cmd, char ***envp, int *status)
+// パイプラインの実行
+void execute_pipeline(t_command *cmd, char ***envp, int *status)
 {
-	int		pipe_fd[2];
-	int		original_stdin;
-	int		original_stdout;
-	pid_t	pid;
+	int     pipe_fd[2];
+	int     original_stdin;
+	int     original_stdout;
+	pid_t   pid;
 
 	original_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
@@ -49,7 +53,7 @@ void	execute_pipeline(t_command *cmd, char ***envp, int *status)
 		{
 			perror("pipe");
 			*status = 1;
-			return ;
+			return;
 		}
 		pid = fork();
 		if (pid == 0)
