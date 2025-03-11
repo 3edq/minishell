@@ -36,7 +36,6 @@ void							free_lexer_list(t_lexer *lexer);
 void							free_tools(t_tools *tools);
 void							apply_heredoc(t_command *cmd);
 void							setup_signal_handlers(void);
-void							handle_heredoc_execution(t_command *cmd);
 void							handle_single_heredoc(t_heredoc *heredoc);
 
 #endif

@@ -15,6 +15,7 @@ SRCS = $(SRC_DIR)/main.c \
        $(LEXER_DIR)/lexer.c \
        $(LEXER_DIR)/lexer_util.c \
        $(PARSER_DIR)/parser.c \
+       $(PARSER_DIR)/parser_here.c\
        $(PARSER_DIR)/parser_util.c \
        $(BUILTIN_DIR)/builtin.c \
        $(BUILTIN_DIR)/builtin_cd.c \

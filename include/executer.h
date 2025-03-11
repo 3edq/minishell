@@ -11,6 +11,5 @@ void	execute_command(t_command *cmd, char ***envp, int *status);
 char	*find_path(char *cmd, char **envp);
 void	handle_redirections(t_command *cmd);
 void	execute_pipeline(t_command *cmd, char ***envp, int *status);
-void	handle_heredoc_execution(t_command *cmd);
 
 #endif

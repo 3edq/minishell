@@ -26,7 +26,6 @@ typedef struct s_command
 
 t_command				*parse_tokens(t_lexer *lexer_list);
 void					free_commands(t_command *cmd);
-void					print_commands(t_command *cmd);
 int						handle_pipe(t_lexer **lexer, t_command **current);
 int						which_redirect(t_lexer **lexer_list,
 							t_command *current);
@@ -34,5 +33,6 @@ void					*ft_realloc(void *ptr, size_t new_size);
 t_command				*new_command(void);
 char					*expand_string(const char *input, int exit_status);
 void					add_heredoc(t_command *cmd, char *delimiter);
+int						handle_heredoc(t_lexer **lexer, t_command *current);
 
 #endif
