@@ -1,16 +1,6 @@
 #include "../../include/minishell.h"
 
-void	apply_heredoc_single(t_command *cmd)
-{
-	if (cmd->heredoc_list->fd > 0)
-	{
-		dup2(cmd->heredoc_list->fd, STDIN_FILENO);
-		close(cmd->heredoc_list->fd);
-		cmd->heredoc_list->fd = -1;
-	}
-}
-
-void	apply_heredoc_multi(t_command *cmd)
+static void	apply_heredoc_multi(t_command *cmd)
 {
 	t_heredoc	*current;
 	t_heredoc	*last_heredoc;
@@ -40,42 +30,42 @@ void	apply_heredoc(t_command *cmd)
 {
 	if (!cmd->heredoc_list)
 		return ;
-	if (cmd->heredoc_list->next)
-		apply_heredoc_multi(cmd);
-	else
-		apply_heredoc_single(cmd);
-}
-
-void	handle_heredoc_execution(t_command *cmd)
-{
-	t_heredoc	*current;
-
-	current = cmd->heredoc_list;
-	while (current)
+	if (!cmd->heredoc_list->next)
 	{
-		handle_single_heredoc(current);
-		current = current->next;
+		if (cmd->heredoc_list->fd > 0)
+		{
+			dup2(cmd->heredoc_list->fd, STDIN_FILENO);
+			close(cmd->heredoc_list->fd);
+			cmd->heredoc_list->fd = -1;
+		}
+		return ;
 	}
+	apply_heredoc_multi(cmd);
 }
 
 void	process_all_heredocs(t_command *cmd_list)
 {
 	t_command	*current;
+	t_heredoc	*heredoc_current;
 	int			saved_stdin;
 
 	saved_stdin = dup(STDIN_FILENO);
 	current = cmd_list;
 	while (current)
 	{
-		if (current->heredoc_list)
-			handle_heredoc_execution(current);
+		heredoc_current = current->heredoc_list;
+		while (heredoc_current)
+		{
+			handle_single_heredoc(heredoc_current);
+			heredoc_current = heredoc_current->next;
+		}
 		current = current->next;
 	}
 	dup2(saved_stdin, STDIN_FILENO);
 	close(saved_stdin);
 }
 
-void	handle_heredoc_child(int *pipe_fds, char *delimiter)
+static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
 {
 	char	*line;
 
