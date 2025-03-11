@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "../../include/minishell.h"
 
 void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 {

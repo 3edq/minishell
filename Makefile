@@ -35,6 +35,8 @@ OBJS = $(SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -Iinclude -I$(LIBFT_DIR)
+# CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address,undefined -fno-omit-frame-pointer -Iinclude -I$(LIBFT_DIR)
+
 LDFLAGS = -L$(LIBFT_DIR) -lft -lreadline
 
 all: $(LIBFT_A) $(NAME)
@@ -54,5 +56,8 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+# debug: $(NAME)
+# 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind.log ./$(NAME)
 
 .PHONY: all clean fclean re

@@ -70,7 +70,11 @@ static int	expand_character(char **result, char c)
 	ch[1] = '\0';
 	temp = ft_strjoin(*result, ch);
 	if (!temp)
-		return (free(*result), *result = NULL, 1);
+	{
+		free(*result);
+		*result = NULL;
+		return (1);
+	}
 	free(*result);
 	*result = temp;
 	return (0);
@@ -80,6 +84,7 @@ static int	expand_dollar(char **result, const char *input, size_t *i,
 		int exit_status)
 {
 	char	*temp;
+	char	*new_result;
 
 	(*i)++;
 	if (input[*i] == '?')
@@ -87,18 +92,19 @@ static int	expand_dollar(char **result, const char *input, size_t *i,
 		temp = expand_exit_status(exit_status);
 		if (!temp)
 			return (free(*result), *result = NULL, 1);
-		*result = ft_strjoin(*result, temp);
+		new_result = ft_strjoin(*result, temp);
 		free(temp);
-		if (!(*result))
-			return (1);
+		if (!new_result)
+			return (free(*result), *result = NULL, 1);
+		free(*result);
+		*result = new_result;
 		(*i)++;
 		return (2);
 	}
 	else if (input[*i] == '$')
 	{
-		if (expand_character(result, '$'))
-			return (1);
 		(*i)++;
+		return (2);
 	}
 	return (0);
 }
@@ -107,6 +113,7 @@ static int	expand_variable_part(char **result, const char *input, size_t *i)
 {
 	char	var[256];
 	char	*temp;
+	char	*new_result;
 	size_t	j;
 
 	j = 0;
@@ -116,10 +123,12 @@ static int	expand_variable_part(char **result, const char *input, size_t *i)
 	temp = expand_variable(var);
 	if (!temp || !*temp)
 		return (free(*result), *result = NULL, 1);
-	*result = ft_strjoin(*result, temp);
+	new_result = ft_strjoin(*result, temp);
 	free(temp);
-	if (!(*result))
-		return (1);
+	if (!new_result)
+		return (free(*result), *result = NULL, 1);
+	free(*result);
+	*result = new_result;
 	return (0);
 }
 
