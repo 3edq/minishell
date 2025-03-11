@@ -1,23 +1,115 @@
 #include "../../include/minishell.h"
 
+void	apply_heredoc_single(t_command *cmd)
+{
+	if (cmd->heredoc_list->fd > 0)
+	{
+		dup2(cmd->heredoc_list->fd, STDIN_FILENO);
+		close(cmd->heredoc_list->fd);
+		cmd->heredoc_list->fd = -1;
+	}
+}
+
+void	apply_heredoc_multi(t_command *cmd)
+{
+	t_heredoc	*current;
+	t_heredoc	*last_heredoc;
+
+	last_heredoc = cmd->heredoc_list;
+	while (last_heredoc->next)
+		last_heredoc = last_heredoc->next;
+	if (last_heredoc && last_heredoc->fd > 0)
+	{
+		dup2(last_heredoc->fd, STDIN_FILENO);
+		close(last_heredoc->fd);
+		last_heredoc->fd = -1;
+	}
+	current = cmd->heredoc_list;
+	while (current)
+	{
+		if (current != last_heredoc && current->fd > 0)
+		{
+			close(current->fd);
+			current->fd = -1;
+		}
+		current = current->next;
+	}
+}
+
 void	apply_heredoc(t_command *cmd)
 {
-	if (cmd->heredoc_fd > 0)
-	{
-		dup2(cmd->heredoc_fd, STDIN_FILENO);
-		close(cmd->heredoc_fd);
-		cmd->heredoc_fd = -1;
-	}
+	if (!cmd->heredoc_list)
+		return ;
+	if (cmd->heredoc_list->next)
+		apply_heredoc_multi(cmd);
+	else
+		apply_heredoc_single(cmd);
 }
 
 void	handle_heredoc_execution(t_command *cmd)
 {
+	t_heredoc	*current;
+
+	current = cmd->heredoc_list;
+	while (current)
+	{
+		handle_single_heredoc(current);
+		current = current->next;
+	}
+}
+
+void	process_all_heredocs(t_command *cmd_list)
+{
+	t_command	*current;
+	int			saved_stdin;
+
+	saved_stdin = dup(STDIN_FILENO);
+	current = cmd_list;
+	while (current)
+	{
+		if (current->heredoc_list)
+			handle_heredoc_execution(current);
+		current = current->next;
+	}
+	dup2(saved_stdin, STDIN_FILENO);
+	close(saved_stdin);
+}
+
+void	handle_heredoc_child(int *pipe_fds, char *delimiter)
+{
+	char	*line;
+
+	signal(SIGINT, SIG_DFL);
+	close(pipe_fds[0]);
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			fprintf(stderr, "minishell: warning: here-document delimited by");
+			fprintf(stderr, " end-of-file (wanted `%s')\n", delimiter);
+			break ;
+		}
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(pipe_fds[1], line, ft_strlen(line));
+		write(pipe_fds[1], "\n", 1);
+		free(line);
+	}
+	close(pipe_fds[1]);
+	exit(0);
+}
+
+void	handle_single_heredoc(t_heredoc *heredoc)
+{
 	int		pipe_fds[2];
 	pid_t	pid;
-	char	*line;
 	int		status;
 
-	if (!cmd->delimiter)
+	if (!heredoc || !heredoc->delimiter)
 		return ;
 	g_shell_state = STATE_HEREDOC;
 	if (pipe(pipe_fds) == -1)
@@ -34,31 +126,7 @@ void	handle_heredoc_execution(t_command *cmd)
 		return ;
 	}
 	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		close(pipe_fds[0]);
-		while (1)
-		{
-			line = readline("> ");
-			if (!line)
-			{
-				fprintf(stderr,
-					"minishell: warning: here-document delimited by");
-				fprintf(stderr, " end-of-file (wanted `%s')\n", cmd->delimiter);
-				break ;
-			}
-			if (ft_strcmp(line, cmd->delimiter) == 0)
-			{
-				free(line);
-				break ;
-			}
-			write(pipe_fds[1], line, ft_strlen(line));
-			write(pipe_fds[1], "\n", 1);
-			free(line);
-		}
-		close(pipe_fds[1]);
-		exit(0);
-	}
+		handle_heredoc_child(pipe_fds, heredoc->delimiter);
 	else
 	{
 		close(pipe_fds[1]);
@@ -68,7 +136,7 @@ void	handle_heredoc_execution(t_command *cmd)
 			close(pipe_fds[0]);
 			return ;
 		}
-		cmd->heredoc_fd = pipe_fds[0];
+		heredoc->fd = pipe_fds[0];
+		g_shell_state = STATE_INTERACTIVE;
 	}
-	g_shell_state = STATE_INTERACTIVE;
 }

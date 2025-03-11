@@ -12,11 +12,35 @@ t_command	*new_command(void)
 	cmd->input_file = NULL;
 	cmd->output_file = NULL;
 	cmd->append = 0;
-	cmd->delimiter = NULL;
-	cmd->heredoc_fd = -1;
-	cmd->heredoc_filename = NULL;
+	cmd->heredoc_list = NULL;
 	cmd->next = NULL;
 	return (cmd);
+}
+void	add_heredoc(t_command *cmd, char *delimiter)
+{
+	t_heredoc	*new_doc;
+	t_heredoc	*current;
+
+	new_doc = malloc(sizeof(t_heredoc));
+	if (!new_doc)
+		return ;
+	new_doc->delimiter = ft_strdup(delimiter);
+	if (!new_doc->delimiter)
+	{
+		free(new_doc);
+		return ;
+	}
+	new_doc->fd = -1;
+	new_doc->next = NULL;
+	if (!cmd->heredoc_list)
+	{
+		cmd->heredoc_list = new_doc;
+		return ;
+	}
+	current = cmd->heredoc_list;
+	while (current->next)
+		current = current->next;
+	current->next = new_doc;
 }
 
 static int	add_argument(t_command *cmd, char *arg)

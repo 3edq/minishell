@@ -6,15 +6,20 @@
 # include <stdlib.h>
 # include <string.h>
 
+typedef struct s_heredoc
+{
+	char				*delimiter;
+	int					fd;
+	int					type;
+	struct s_heredoc	*next;
+}						t_heredoc;
+
 typedef struct s_command
 {
 	char				**args;
 	char				*input_file;
 	char				*output_file;
-	char				*delimiter;
-	char				*heredoc_file;
-	int					heredoc_fd;
-	char				*heredoc_filename;
+	t_heredoc			*heredoc_list;
 	int					append;
 	struct s_command	*next;
 }						t_command;
@@ -28,5 +33,6 @@ int						which_redirect(t_lexer **lexer_list,
 void					*ft_realloc(void *ptr, size_t new_size);
 t_command				*new_command(void);
 char					*expand_string(const char *input, int exit_status);
+void					add_heredoc(t_command *cmd, char *delimiter);
 
 #endif

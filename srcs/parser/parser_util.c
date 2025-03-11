@@ -114,14 +114,11 @@ static int	handle_heredoc(t_lexer **lexer, t_command *current)
 		delete_quotes(delimiter, '"');
 		delete_quotes(delimiter, '\'');
 	}
-	// 前のデリミタがあれば解放
-	if (current->delimiter)
-		free(current->delimiter);
-	current->delimiter = delimiter;
+	add_heredoc(current, delimiter);
+	free(delimiter);
 	*lexer = (*lexer)->next->next;
 	return (1);
 }
-
 int	which_redirect(t_lexer **lexer_list, t_command *current)
 {
 	int	ret;
