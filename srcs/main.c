@@ -148,15 +148,6 @@ int	main(int argc, char **argv, char **envp)
 		}
 		if (expand_command(cmd_list, last_exit_status))
 			continue ;
-		if (cmd_list->args && ft_strcmp(cmd_list->args[0], "exit") == 0)
-		{
-			if (cmd_list->args[1])
-				last_exit_status = ft_atoi(cmd_list->args[1]);
-			free_commands(cmd_list);
-			free_tools(&tools);
-			free_env(my_envp);
-			exit(last_exit_status);
-		}
 		judge_command_list(cmd_list, &my_envp, &last_exit_status);
 		free_commands(cmd_list);
 		free_tools(&tools);
