@@ -25,10 +25,17 @@ int	is_builtin(char *cmd)
 
 int	execute_builtin(t_command *cmd, char ***envp)
 {
+	int	status;
+
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
 		return (builtin_cd(cmd->args, envp));
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
-		builtin_exit(cmd->args);
+	{
+		status = builtin_exit(cmd->args);
+		if (status != 1)
+			exit(status);
+		return (status);
+	}
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
 		return (builtin_pwd());
 	else if (ft_strcmp(cmd->args[0], "echo") == 0)
