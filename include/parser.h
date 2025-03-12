@@ -29,7 +29,8 @@ void					free_commands(t_command *cmd);
 int						handle_pipe(t_lexer **lexer, t_command **current);
 int						which_redirect(t_lexer **lexer_list,
 							t_command *current);
-void					*ft_realloc(void *ptr, size_t new_size);
+void					*ft_realloc(void *ptr, size_t old_size,
+							size_t new_size);
 t_command				*new_command(void);
 char					*expand_string(const char *input, int exit_status);
 void					add_heredoc(t_command *cmd, char *delimiter);

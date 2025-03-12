@@ -1,5 +1,4 @@
 #include "../include/minishell.h"
-
 #include <stddef.h>
 
 int	ft_strcmp(const char *s1, const char *s2)
@@ -16,9 +15,10 @@ int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "pwd") == 0 || ft_strcmp(cmd,
-			"cd") == 0 || ft_strcmp(cmd, "exit") == 0 || ft_strcmp(cmd, "env") == 0
-		|| ft_strcmp(cmd, "export") == 0 || ft_strcmp(cmd, "unset") == 0)
+	if (ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "pwd") == 0
+		|| ft_strcmp(cmd, "cd") == 0 || ft_strcmp(cmd, "exit") == 0
+		|| ft_strcmp(cmd, "env") == 0 || ft_strcmp(cmd, "export") == 0
+		|| ft_strcmp(cmd, "unset") == 0)
 		return (1);
 	return (0);
 }
@@ -26,7 +26,7 @@ int	is_builtin(char *cmd)
 int	execute_builtin(t_command *cmd, char ***envp)
 {
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
-		return (builtin_cd(cmd->args,envp));
+		return (builtin_cd(cmd->args, envp));
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
 		builtin_exit(cmd->args);
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
@@ -46,7 +46,8 @@ int	execute_builtin(t_command *cmd, char ***envp)
 	{
 		if (cmd->args[1])
 			return (builtin_unset(envp, cmd->args[1]));
+		else
+			return (0);
 	}
 	return (-1);
 }
-

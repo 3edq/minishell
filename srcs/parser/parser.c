@@ -16,11 +16,11 @@ t_command	*new_command(void)
 	cmd->next = NULL;
 	return (cmd);
 }
-
 static int	add_argument(t_command *cmd, char *arg)
 {
 	int		count;
 	char	**new_args;
+	size_t	old_size;
 
 	count = 0;
 	if (cmd->args)
@@ -28,7 +28,8 @@ static int	add_argument(t_command *cmd, char *arg)
 		while (cmd->args[count])
 			count++;
 	}
-	new_args = ft_realloc(cmd->args, sizeof(char *) * (count + 2));
+	old_size = sizeof(char *) * (count + 1);
+	new_args = ft_realloc(cmd->args, old_size, sizeof(char *) * (count + 2));
 	if (!new_args)
 		return (0);
 	new_args[count] = ft_strdup(arg);

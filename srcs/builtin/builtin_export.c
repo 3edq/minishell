@@ -28,16 +28,38 @@ char	*ft_strtok(char *str, const char *delim)
 	return (token_start);
 }
 
+static int	is_valid_identifier(const char *arg)
+{
+	int	i;
+
+	if (!arg || !arg[0])
+		return (0);
+	if (!(ft_isalpha(arg[0]) || arg[0] == '_'))
+		return (0);
+	i = 1;
+	while (arg[i] && arg[i] != '=')
+	{
+		if (!(ft_isalnum(arg[i]) || arg[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	builtin_export(char ***envp, char *arg)
 {
 	int		i;
 	char	**new_env;
 	char	*key;
 	size_t	len;
+	int		append_mode;
 
-	if (!arg || !ft_strchr(arg, '='))
-		return (ft_putstr_fd("minishell: export: invalid argument\n",
-				STDERR_FILENO), 1);
+	if (!is_valid_identifier(arg))
+	{
+		ft_putstr_fd(" not a valid identifier\n", STDERR_FILENO);
+		return (1);
+	}
+	append_mode = 0;
 	key = ft_strtok(arg, "=");
 	len = ft_strlen(key);
 	i = 0;

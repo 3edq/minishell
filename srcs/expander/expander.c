@@ -1,5 +1,4 @@
-#include "../include/lexer.h"
-#include "../include/parser.h"
+#include "minishell.h"
 
 char	*expand_variable(const char *var)
 {
@@ -11,133 +10,176 @@ char	*expand_variable(const char *var)
 	return (ft_strdup(value));
 }
 
-int	num_digits(int n)
-{
-	int	i;
-
-	i = 0;
-	while (n > 0)
-	{
-		n /= 10;
-		i++;
-	}
-	return (i);
-}
-
 char	*expand_exit_status(int exit_status)
 {
-	char	*result;
 	char	buffer[12];
 	int		i;
-	int		j;
 	int		num;
+	char	*result;
+	int		len;
+	char	tmp;
 
 	num = exit_status;
-	j = num_digits(num) - 1;
 	i = 0;
 	if (num == 0)
 		buffer[i++] = '0';
 	while (num > 0)
 	{
-		buffer[i++] = ((exit_status >> j) % 10) + '0';
+		buffer[i++] = (num % 10) + '0';
 		num /= 10;
-		j--;
 	}
 	buffer[i] = '\0';
+	len = i;
+	i = 0;
+	while (i < len / 2)
+	{
+		tmp = buffer[i];
+		buffer[i] = buffer[len - i - 1];
+		buffer[len - i - 1] = tmp;
+		i++;
+	}
 	result = ft_strdup(buffer);
 	return (result);
 }
 
+static int	toggle_quote(char c, int *quote_state)
+{
+	if (c == '\'')
+	{
+		if (*quote_state & 0b10) // ダブルクォート内なら無視
+			return (1);
+		*quote_state ^= 0b01; // シングルクォートをトグル
+	}
+	else if (c == '"')
+	{
+		if (*quote_state & 0b01) // シングルクォート内なら無視
+			return (1);
+		*quote_state ^= 0b10; // ダブルクォートをトグル
+	}
+	return (0);
+}
+
+static int	expand_character(char **result, char c)
+{
+	char	ch[2];
+	char	*temp;
+
+	ch[0] = c;
+	ch[1] = '\0';
+	temp = ft_strjoin(*result, ch);
+	if (!temp)
+	{
+		free(*result);
+		*result = NULL;
+		return (1);
+	}
+	free(*result);
+	*result = temp;
+	return (0);
+}
+
+static int	expand_dollar(char **result, const char *input, size_t *i,
+		int exit_status)
+{
+	char	*temp;
+	char	*new_result;
+
+	(*i)++;
+	if (input[*i] == '?')
+	{
+		temp = expand_exit_status(exit_status);
+		if (!temp)
+			return (free(*result), *result = NULL, 1);
+		new_result = ft_strjoin(*result, temp);
+		free(temp);
+		if (!new_result)
+			return (free(*result), *result = NULL, 1);
+		free(*result);
+		*result = new_result;
+		(*i)++;
+		return (2);
+	}
+	else if (input[*i] == '$')
+	{
+		(*i)++;
+		return (2);
+	}
+	return (0);
+}
+
+static int	expand_variable_part(char **result, const char *input, size_t *i)
+{
+	char	var[256];
+	char	*temp;
+	char	*new_result;
+	size_t	j;
+
+	j = 0;
+	while (input[*i] && ((ft_strchr(" \t\n\"'", input[*i]) == NULL)) && j < 255)
+		var[j++] = input[(*i)++];
+	var[j] = '\0';
+	temp = expand_variable(var);
+	if (!temp || !*temp)
+		return (free(*result), *result = NULL, 1);
+	new_result = ft_strjoin(*result, temp);
+	free(temp);
+	if (!new_result)
+		return (free(*result), *result = NULL, 1);
+	free(*result);
+	*result = new_result;
+	return (0);
+}
+
+static int	handle_expansion(char **result, const char *input, size_t *i,
+		int exit_status, int quote_state)
+{
+	int	res;
+
+	res = expand_dollar(result, input, i, exit_status);
+	if (res == 1)
+		return (1);
+	else if (res == 2)
+		return (0);
+	if (!(quote_state & 0b01) && expand_variable_part(result, input, i))
+		return (1);
+	return (0);
+}
+
+static int	process_character(char **result, const char *input, size_t *i,
+		int exit_status, int *quote_state)
+{
+	if (input[*i] == '\'' || input[*i] == '"')
+	{
+		if (toggle_quote(input[*i], quote_state))
+			expand_character(result, input[*i]);
+		(*i)++;
+		return (0);
+	}
+	if (input[*i] == '$' && input[*i + 1] && input[*i + 1] != '"'
+		&& !(*quote_state & 0b01))
+	{
+		return (handle_expansion(result, input, i, exit_status, *quote_state));
+	}
+	else if (expand_character(result, input[(*i)++]))
+		return (1);
+	return (0);
+}
+
 char	*expand_string(const char *input, int exit_status)
 {
-	char *result;
-	char *temp;
-	size_t i;
-	char var[256];
-	size_t j;
-	char ch[2];
-	int s_quote;
-	int d_quote;
+	char	*result;
+	size_t	i;
+	int		quote_state;
 
-	s_quote = 0;
-	d_quote = 0;
+	quote_state = 0;
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
 	i = 0;
 	while (input[i])
 	{
-		if (input[i] == '"' && !s_quote)
-		{
-			d_quote = !d_quote;
-			i++;
-			continue ;
-		}
-		else if (input[i] == '\'' && !d_quote)
-		{
-			s_quote = !s_quote;
-			i++;
-			continue ;
-		}
-		if (input[i] == '$' && input[i + 1] && ((d_quote && !s_quote)
-				|| (!d_quote && !s_quote)))
-		{
-			i++;
-			if (input[i] == '?')
-			{
-				temp = expand_exit_status(exit_status);
-				if (!temp)
-				{
-					free(result);
-					return (NULL);
-				}
-				result = ft_strjoin(result, temp);
-				if (!result)
-				{
-					free(temp);
-					return (NULL);
-				}
-				free(temp);
-				i++;
-			}
-			else if (input[i] == '$')
-				i++;
-			else
-			{
-				j = 0;
-				while (input[i] && (ft_strchr(" \t\n\"'", input[i]) == NULL)
-							&& j < 255)
-					var[j++] = input[i++];
-				var[j] = '\0';
-				temp = expand_variable(var);
-				if (!temp)
-				{
-					free(result);
-					return (NULL);
-				}
-				result = ft_strjoin(result, temp);
-				if (!result)
-				{
-					free(temp);
-					return (NULL);
-				}
-				free(temp);
-			}
-		}
-		else
-		{
-			ch[0] = input[i];
-			ch[1] = '\0';
-			temp = ft_strjoin(result, ch);
-			if (!temp)
-			{
-				free(result);
-				return (NULL);
-			}
-			free(result);
-			result = temp;
-			i++;
-		}
+		if (process_character(&result, input, &i, exit_status, &quote_state))
+			return (NULL);
 	}
 	return (result);
 }
