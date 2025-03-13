@@ -1,5 +1,31 @@
 #include "../../include/minishell.h"
 
+int	judge_path(char *args, int *status)
+{
+	DIR	*dir;
+	int	i;
+
+	i = 0;
+	while (args[i] && args[i] != ' ' && args[i] != '\t')
+	{
+		if (args[i] == '/' || args[i] == '.')
+		{
+			dir = opendir(args);
+			if (dir)
+			{
+				closedir(dir);
+				ft_putstr_fd("bash: ", STDERR_FILENO);
+				ft_putstr_fd(args, STDERR_FILENO);
+				ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+				*status = 126;
+				return (1);
+			}
+		}
+		i++;
+	}
+	return (0);
+}
+
 void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 {
 	char	*cmd_path;
@@ -26,6 +52,8 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 			*status = 0;
 			return ;
 		}
+		if (judge_path(cmd_list->args[0], status))
+			return ;
 		if (is_builtin(cmd_list->args[0]))
 			*status = execute_builtin(cmd_list, envp);
 		else
