@@ -7,7 +7,10 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 	int		original_stdout;
 
 	g_shell_state = STATE_EXECUTING;
-	process_all_heredocs(cmd_list);
+	if (process_all_heredocs(cmd_list))
+	{
+		return ;
+	}
 	if (cmd_list->next)
 	{
 		execute_pipeline(cmd_list, envp, status);
@@ -20,8 +23,7 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 		apply_heredoc(cmd_list);
 		if (!cmd_list->args || !cmd_list->args[0])
 		{
-			fprintf(stderr, "Error: Invalid command\n");
-			*status = 127;
+			*status = 0;
 			return ;
 		}
 		if (is_builtin(cmd_list->args[0]))

@@ -1,6 +1,6 @@
 #include "../include/minishell.h"
 
-volatile t_shell_state g_shell_state = STATE_INTERACTIVE;
+volatile t_shell_state	g_shell_state = STATE_INTERACTIVE;
 
 void	free_env(char **envp)
 {
@@ -85,25 +85,25 @@ void	free_tools(t_tools *tools)
 
 int	expand_command(t_command *cmd_list, int exit_status)
 {
-    t_command		*cmd;
-    int				i;
-    char			*expanded_arg;
+	t_command	*cmd;
+	int			i;
+	char		*expanded_arg;
 
-    cmd = cmd_list;
-    while (cmd)
-    {
-        i = 0;
-        while (cmd->args && cmd->args[i])
-        {
-            expanded_arg = expand_string(cmd->args[i], exit_status);
-            if (!expanded_arg)
-                return (1);
-            free(cmd->args[i]);
-            cmd->args[i] = expanded_arg;
-            i++;
-        }
-        cmd = cmd->next;
-    }
+	cmd = cmd_list;
+	while (cmd)
+	{
+		i = 0;
+		while (cmd->args && cmd->args[i])
+		{
+			expanded_arg = expand_string(cmd->args[i], exit_status);
+			if (!expanded_arg)
+				return (1);
+			free(cmd->args[i]);
+			cmd->args[i] = expanded_arg;
+			i++;
+		}
+		cmd = cmd->next;
+	}
 	return (0);
 }
 

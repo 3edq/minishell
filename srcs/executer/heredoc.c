@@ -43,7 +43,7 @@ void	apply_heredoc(t_command *cmd)
 	apply_heredoc_multi(cmd);
 }
 
-void	process_all_heredocs(t_command *cmd_list)
+int	process_all_heredocs(t_command *cmd_list)
 {
 	t_command	*current;
 	t_heredoc	*heredoc_current;
@@ -56,13 +56,19 @@ void	process_all_heredocs(t_command *cmd_list)
 		heredoc_current = current->heredoc_list;
 		while (heredoc_current)
 		{
-			handle_single_heredoc(heredoc_current);
+			if (handle_single_heredoc(heredoc_current))
+			{
+				dup2(saved_stdin, STDIN_FILENO);
+				close(saved_stdin);
+				return (1);
+			}
 			heredoc_current = heredoc_current->next;
 		}
 		current = current->next;
 	}
 	dup2(saved_stdin, STDIN_FILENO);
 	close(saved_stdin);
+	return (0);
 }
 
 static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
@@ -93,19 +99,19 @@ static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
 	exit(0);
 }
 
-void	handle_single_heredoc(t_heredoc *heredoc)
+int	handle_single_heredoc(t_heredoc *heredoc)
 {
 	int		pipe_fds[2];
 	pid_t	pid;
 	int		status;
 
 	if (!heredoc || !heredoc->delimiter)
-		return ;
+		return (0);
 	g_shell_state = STATE_HEREDOC;
 	if (pipe(pipe_fds) == -1)
 	{
 		perror("pipe");
-		return ;
+		return (0);
 	}
 	pid = fork();
 	if (pid == -1)
@@ -113,7 +119,7 @@ void	handle_single_heredoc(t_heredoc *heredoc)
 		perror("fork");
 		close(pipe_fds[0]);
 		close(pipe_fds[1]);
-		return ;
+		return (0);
 	}
 	if (pid == 0)
 		handle_heredoc_child(pipe_fds, heredoc->delimiter);
@@ -124,9 +130,11 @@ void	handle_single_heredoc(t_heredoc *heredoc)
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			close(pipe_fds[0]);
-			return ;
+			g_shell_state = STATE_INTERACTIVE;
+			return (1);
 		}
 		heredoc->fd = pipe_fds[0];
 		g_shell_state = STATE_INTERACTIVE;
 	}
+	return (0);
 }

@@ -10,6 +10,7 @@
 # include "parser.h"
 # include <errno.h>
 # include <fcntl.h>
+# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
@@ -18,7 +19,6 @@
 # include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
-# include <limits.h>
 
 typedef enum e_shell_state
 {
@@ -29,7 +29,8 @@ typedef enum e_shell_state
 
 extern volatile t_shell_state	g_shell_state;
 
-void							process_all_heredocs(t_command *cmd_list);
+int								process_all_heredocs(t_command *cmd_list);
+int								handle_single_heredoc(t_heredoc *heredoc);
 char							**copy_env(char **envp);
 void							free_env(char **envp);
 void							free_commands(t_command *cmd);
@@ -37,6 +38,5 @@ void							free_lexer_list(t_lexer *lexer);
 void							free_tools(t_tools *tools);
 void							apply_heredoc(t_command *cmd);
 void							setup_signal_handlers(void);
-void							handle_single_heredoc(t_heredoc *heredoc);
 
 #endif
