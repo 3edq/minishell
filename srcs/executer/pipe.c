@@ -18,46 +18,64 @@ static void	child_process(t_command *cmd, char ***envp, int *status,
 	exit(*status);
 }
 
-static void parent_process(pid_t pid, int *status, int *pipe_fd, t_command *cmd)
+static void	parent_process(int *pipe_fd, t_command *cmd)
 {
-	int exit_code;
-
 	if (cmd->next)
 	{
 		close(pipe_fd[1]);
 		dup2(pipe_fd[0], STDIN_FILENO);
 		close(pipe_fd[0]);
 	}
-	waitpid(pid, &exit_code, 0);
-	if (WIFEXITED(exit_code))
-		*status = WEXITSTATUS(exit_code);
-	else
-		*status = 1;
 }
 
-void execute_pipeline(t_command *cmd, char ***envp, int *status)
+static int	count_and_execute_cmds(t_command *cmd, char ***envp, int *status)
 {
-	int     pipe_fd[2];
-	int     original_stdin;
-	int     original_stdout;
-	pid_t   pid;
+	int			pipe_fd[2];
+	pid_t		pid;
+	t_command	*current;
+	int			cmd_count;
+
+	current = cmd;
+	cmd_count = 0;
+	while (current)
+	{
+		if (current->next && pipe(pipe_fd) == -1)
+			return (perror("pipe"), *status = 1, -1);
+		pid = fork();
+		if (pid == 0)
+			child_process(current, envp, status, pipe_fd);
+		else if (pid > 0)
+		{
+			parent_process(pipe_fd, current);
+			cmd_count++;
+		}
+		current = current->next;
+	}
+	return (cmd_count);
+}
+
+void	execute_pipeline(t_command *cmd, char ***envp, int *status)
+{
+	int	original_stdin;
+	int	original_stdout;
+	int	cmd_count;
+	int	exit_code;
+	int	i;
 
 	original_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
-	while (cmd)
+	if ((cmd_count = count_and_execute_cmds(cmd, envp, status)) < 0)
+		return ;
+	i = -1;
+	while (i++ < cmd_count)
 	{
-		if (cmd->next && pipe(pipe_fd) == -1)
-		{
-			perror("pipe");
+		wait(&exit_code);
+		if (WIFEXITED(exit_code))
+			*status = WEXITSTATUS(exit_code);
+		else if (WIFSIGNALED(exit_code))
+			*status = 128 + WTERMSIG(exit_code);
+		else
 			*status = 1;
-			return;
-		}
-		pid = fork();
-		if (pid == 0)
-			child_process(cmd, envp, status, pipe_fd);
-		else if (pid > 0)
-			parent_process(pid, status, pipe_fd, cmd);
-		cmd = cmd->next;
 	}
 	dup2(original_stdin, STDIN_FILENO);
 	dup2(original_stdout, STDOUT_FILENO);
