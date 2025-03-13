@@ -42,12 +42,12 @@ void	apply_heredoc(t_command *cmd)
 	}
 	apply_heredoc_multi(cmd);
 }
-
-int	process_all_heredocs(t_command *cmd_list)
+int	process_all_heredocs(t_command *cmd_list, int *status)
 {
 	t_command	*current;
 	t_heredoc	*heredoc_current;
 	int			saved_stdin;
+	int			result;
 
 	saved_stdin = dup(STDIN_FILENO);
 	current = cmd_list;
@@ -56,10 +56,12 @@ int	process_all_heredocs(t_command *cmd_list)
 		heredoc_current = current->heredoc_list;
 		while (heredoc_current)
 		{
-			if (handle_single_heredoc(heredoc_current))
+			result = handle_single_heredoc(heredoc_current);
+			if (result)
 			{
 				dup2(saved_stdin, STDIN_FILENO);
 				close(saved_stdin);
+				*status = 130;
 				return (1);
 			}
 			heredoc_current = heredoc_current->next;

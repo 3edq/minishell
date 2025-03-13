@@ -7,7 +7,7 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 	int		original_stdout;
 
 	g_shell_state = STATE_EXECUTING;
-	if (process_all_heredocs(cmd_list))
+	if (process_all_heredocs(cmd_list, status))
 	{
 		return ;
 	}
@@ -55,6 +55,7 @@ void	execute_command(t_command *cmd, char ***envp, int *status)
 	char	*path;
 	pid_t	pid;
 	int		exit_code;
+	int		sig;
 
 	if (!cmd->args || !cmd->args[0])
 	{
@@ -85,7 +86,9 @@ void	execute_command(t_command *cmd, char ***envp, int *status)
 		waitpid(pid, &exit_code, 0);
 		if (WIFSIGNALED(exit_code))
 		{
-			if (WTERMSIG(exit_code) == SIGQUIT)
+			sig = WTERMSIG(exit_code);
+			*status = 128 + sig;
+			if (sig == SIGQUIT)
 				ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
 		}
 		else if (WIFEXITED(exit_code))
