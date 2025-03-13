@@ -19,6 +19,7 @@
 # include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <dirent.h>
 
 typedef enum e_shell_state
 {
