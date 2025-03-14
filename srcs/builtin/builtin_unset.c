@@ -11,7 +11,8 @@ int	builtin_unset(char ***envp, char *key)
 	i = 0;
 	while ((*envp)[i])
 	{
-		if (ft_strncmp((*envp)[i], key, len) == 0 && (*envp)[i][len] == '=')
+		if ((ft_strncmp((*envp)[i], key, len) == 0 && (*envp)[i][len] == '=')
+			|| ft_strcmp((*envp)[i], key) == 0)
 			break ;
 		i++;
 	}
@@ -23,15 +24,22 @@ int	builtin_unset(char ***envp, char *key)
 	new_env = malloc(sizeof(char *) * j);
 	if (!new_env)
 		return (1);
-	i = 0;
 	j = 0;
-	while ((*envp)[i])
+	while ((*envp)[j])
 	{
-		if (i != j)
-			new_env[j++] = (*envp)[i];
-		i++;
+		if (j == i)
+		{
+			free((*envp)[j]);
+			j++;
+			continue ;
+		}
+		if (j < i)
+			new_env[j] = (*envp)[j];
+		else
+			new_env[j - 1] = (*envp)[j];
+		j++;
 	}
-	new_env[j] = NULL;
+	new_env[j - 1] = NULL;
 	free(*envp);
 	*envp = new_env;
 	return (0);

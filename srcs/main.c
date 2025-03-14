@@ -83,24 +83,67 @@ void	free_tools(t_tools *tools)
 	free(tools->args);
 }
 
+// int	expand_command(t_command *cmd_list, int exit_status)
+// {
+// 	t_command	*cmd;
+// 	int			i;
+// 	char		*expanded_arg;
+
+// 	cmd = cmd_list;
+// 	while (cmd)
+// 	{
+// 		i = 0;
+// 		while (cmd->args && cmd->args[i])
+// 		{
+// 			expanded_arg = expand_string(cmd->args[i], exit_status);
+// 			if (!expanded_arg)
+// 				return (1);
+// 			free(cmd->args[i]);
+// 			cmd->args[i] = expanded_arg;
+// 			i++;
+// 		}
+// 		cmd = cmd->next;
+// 	}
+// 	return (0);
+// }
+
 int	expand_command(t_command *cmd_list, int exit_status)
 {
 	t_command	*cmd;
 	int			i;
+	int			j;
 	char		*expanded_arg;
 
 	cmd = cmd_list;
 	while (cmd)
 	{
 		i = 0;
-		while (cmd->args && cmd->args[i])
+		if (cmd->args)
 		{
-			expanded_arg = expand_string(cmd->args[i], exit_status);
-			if (!expanded_arg)
-				return (1);
-			free(cmd->args[i]);
-			cmd->args[i] = expanded_arg;
-			i++;
+			i = 0;
+			while (cmd->args[i])
+			{
+				expanded_arg = expand_string(cmd->args[i], exit_status);
+				if (!expanded_arg)
+				{
+					free(cmd->args[i]);
+					j = i;
+					while (cmd->args[j])
+					{
+						cmd->args[j] = cmd->args[j + 1];
+						j++;
+					}
+					continue ;
+				}
+				free(cmd->args[i]);
+				cmd->args[i] = expanded_arg;
+				i++;
+			}
+			if (cmd->args[0] == NULL)
+			{
+				free(cmd->args);
+				cmd->args = NULL;
+			}
 		}
 		cmd = cmd->next;
 	}

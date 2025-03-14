@@ -46,15 +46,15 @@ static int	toggle_quote(char c, int *quote_state)
 {
 	if (c == '\'')
 	{
-		if (*quote_state & 0b10) // ダブルクォート内なら無視
+		if (*quote_state & 0b10)
 			return (1);
-		*quote_state ^= 0b01; // シングルクォートをトグル
+		*quote_state ^= 0b01;
 	}
 	else if (c == '"')
 	{
-		if (*quote_state & 0b01) // シングルクォート内なら無視
+		if (*quote_state & 0b01)
 			return (1);
-		*quote_state ^= 0b10; // ダブルクォートをトグル
+		*quote_state ^= 0b10;
 	}
 	return (0);
 }
