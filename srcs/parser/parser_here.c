@@ -21,9 +21,11 @@ static void	delete_quotes(char *str, char quote)
 	while (i < len - 1)
 		new_str[j++] = str[i++];
 	new_str[j] = '\0';
-	strcpy(str, new_str); // strcpyを使用
+	// strcpy(str, new_str); // strcpyを使用
+	ft_strlcpy(str, new_str, len);
 	free(new_str);
 }
+
 void	add_heredoc(t_command *cmd, char *delimiter)
 {
 	t_heredoc	*new_doc;

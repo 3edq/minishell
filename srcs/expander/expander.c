@@ -1,13 +1,28 @@
 #include "minishell.h"
 
-char	*expand_variable(const char *var)
+// char	*expand_variable(const char *var)
+// {
+// 	char	*value;
+
+// 	value = getenv(var);
+// 	if (!value)
+// 		return (ft_strdup(""));
+// 	return (ft_strdup(value));
+// }
+
+char	*expand_variable(const char *var_name)
 {
 	char	*value;
+	char	*expanded;
 
-	value = getenv(var);
+	value = getenv(var_name);
 	if (!value)
-		return (ft_strdup(""));
-	return (ft_strdup(value));
+		expanded = ft_strdup("");
+	else
+		expanded = ft_strdup(value);
+	if (!expanded)
+		return (NULL);
+	return (expanded);
 }
 
 char	*expand_exit_status(int exit_status)
@@ -39,6 +54,8 @@ char	*expand_exit_status(int exit_status)
 		i++;
 	}
 	result = ft_strdup(buffer);
+	if (!result)
+		return (NULL);
 	return (result);
 }
 
@@ -119,8 +136,15 @@ static int	expand_variable_part(char **result, const char *input, size_t *i)
 		var[j++] = input[(*i)++];
 	var[j] = '\0';
 	temp = expand_variable(var);
-	if (!temp || !*temp)
+	// if (!temp || !*temp)
+	// 	return (free(*result), *result = NULL, 1);
+	if (!temp)
 		return (free(*result), *result = NULL, 1);
+	if (!*temp) // temp が空文字列でも free する
+	{
+		free(temp);
+		return (1);
+	}
 	new_result = ft_strjoin(*result, temp);
 	free(temp);
 	if (!new_result)
@@ -179,7 +203,10 @@ char	*expand_string(const char *input, int exit_status)
 	while (input[i])
 	{
 		if (process_character(&result, input, &i, exit_status, &quote_state))
+		{
+			free(result);
 			return (NULL);
+		}
 	}
 	return (result);
 }
