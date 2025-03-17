@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_echo.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 16:28:03 by enkwak            #+#    #+#             */
+/*   Updated: 2025/03/17 16:28:05 by enkwak           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 int	builtin_echo(char **args)
@@ -21,9 +33,8 @@ int	builtin_echo(char **args)
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], STDOUT_FILENO);
-		if (args[i + 1])
+		if (args[i++ + 1])
 			ft_putchar_fd(' ', STDOUT_FILENO);
-		i++;
 	}
 	if (newline)
 		ft_putchar_fd('\n', STDOUT_FILENO);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_exit.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 16:30:23 by enkwak            #+#    #+#             */
+/*   Updated: 2025/03/17 16:30:26 by enkwak           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 static int	is_numeric(const char *str)
@@ -38,14 +50,13 @@ static int	check_overflow(const char *str)
 	}
 	while (str[i])
 	{
-		digit = str[i] - '0';
+		digit = str[i++] - '0';
 		if ((sign == 1 && (num > (LONG_MAX / 10) || (num == (LONG_MAX / 10)
 						&& digit > (LONG_MAX % 10)))) || (sign == -1
 				&& (num > (LONG_MIN / -10) || (num == (LONG_MIN / -10)
 						&& digit > (((LONG_MIN) % 10) * -1)))))
 			return (1);
 		num = num * 10 + digit;
-		i++;
 	}
 	return (0);
 }

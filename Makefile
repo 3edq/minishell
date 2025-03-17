@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/03/17 16:21:27 by enkwak            #+#    #+#              #
+#    Updated: 2025/03/17 16:21:32 by enkwak           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = minishell
 
 LIBFT_DIR = libft
@@ -31,6 +43,7 @@ SRCS = $(SRC_DIR)/main.c \
        $(EXECUTER_DIR)/redirect.c \
        $(EXECUTER_DIR)/heredoc.c \
        $(EXPANDER_DIR)/expander.c \
+       $(EXPANDER_DIR)/expander_utils.c \
        $(SIGNAL_DIR)/signals.c
 
 OBJS = $(SRCS:.c=.o)
