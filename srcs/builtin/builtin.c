@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 21:03:49 by enkwak            #+#    #+#             */
+/*   Updated: 2025/03/17 21:11:11 by enkwak           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 #include <stddef.h>
 
@@ -23,13 +35,41 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
+static int	execute_complex_builtins(t_command *cmd, char ***envp,
+		char ***my_env)
+{
+	int	status1;
+	int	status2;
+
+	if (ft_strcmp(cmd->args[0], "export") == 0)
+	{
+		if (!cmd->args[1])
+			return (builtin_export(envp, NULL));
+		else
+			return (builtin_export(envp, cmd->args[1]));
+	}
+	else if (ft_strcmp(cmd->args[0], "unset") == 0)
+	{
+		if (cmd->args[1])
+		{
+			status1 = builtin_unset(envp, cmd->args[1]);
+			status2 = builtin_unset(my_env, cmd->args[1]);
+			if (status1 != 0 || status2 != 0)
+				return (1);
+			else
+				return (0);
+		}
+		else
+			return (0);
+	}
+	return (-1);
+}
+
 int	execute_builtin(t_command *cmd, char ***envp)
 {
 	int			status;
 	static char	**my_env;
 	static int	sign = 0;
-	int			status1;
-	int			status2;
 
 	if (sign++ == 0)
 		my_env = copy_env(*envp);
@@ -48,26 +88,5 @@ int	execute_builtin(t_command *cmd, char ***envp)
 		return (builtin_echo(cmd->args));
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		return (builtin_env(my_env));
-	else if (ft_strcmp(cmd->args[0], "export") == 0)
-	{
-		if (!cmd->args[1])
-			return (builtin_export(envp, NULL));
-		else
-			return (builtin_export(envp, cmd->args[1]));
-	}
-	else if (ft_strcmp(cmd->args[0], "unset") == 0)
-	{
-		if (cmd->args[1])
-		{
-			status1 = builtin_unset(envp, cmd->args[1]);
-			status2 = builtin_unset(&my_env, cmd->args[1]);
-			if (status1 != 0 || status2 != 0)
-				return (1);
-			else
-				return (0);
-		}
-		else
-			return (0);
-	}
-	return (-1);
+	return (execute_complex_builtins(cmd, envp, &my_env));
 }

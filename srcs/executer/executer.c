@@ -32,7 +32,7 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 	int		original_stdin;
 	int		original_stdout;
 
-	g_shell_state = STATE_EXECUTING;
+	g_shell_state = 2;
 	if (process_all_heredocs(cmd_list, status))
 	{
 		return ;
@@ -76,8 +76,9 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 		close(original_stdin);
 		close(original_stdout);
 	}
-	g_shell_state = STATE_INTERACTIVE;
+	g_shell_state = 0;
 }
+
 void	execute_command(t_command *cmd, char ***envp, int *status)
 {
 	char	*path;

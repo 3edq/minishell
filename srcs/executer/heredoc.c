@@ -109,7 +109,7 @@ int	handle_single_heredoc(t_heredoc *heredoc)
 
 	if (!heredoc || !heredoc->delimiter)
 		return (0);
-	g_shell_state = STATE_HEREDOC;
+	g_shell_state = 1;
 	if (pipe(pipe_fds) == -1)
 	{
 		perror("pipe");
@@ -132,11 +132,11 @@ int	handle_single_heredoc(t_heredoc *heredoc)
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			close(pipe_fds[0]);
-			g_shell_state = STATE_INTERACTIVE;
+			g_shell_state = 0;
 			return (1);
 		}
 		heredoc->fd = pipe_fds[0];
-		g_shell_state = STATE_INTERACTIVE;
+		g_shell_state = 0;
 	}
 	return (0);
 }

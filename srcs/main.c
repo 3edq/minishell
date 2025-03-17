@@ -1,6 +1,6 @@
 #include "../include/minishell.h"
 
-volatile t_shell_state	g_shell_state = STATE_INTERACTIVE;
+volatile int	g_shell_state = 0;
 
 void	free_env(char **envp)
 {
@@ -101,12 +101,35 @@ void	free_tools(t_tools *tools)
 	free(tools->args);
 }
 
-int	expand_command(t_command *cmd_list, int exit_status)
+void	expand_command_util(t_command *cmd, int i, int j, int exit_status)
+{
+	char	*expanded_arg;
+
+	while (cmd->args[i])
+	{
+		expanded_arg = expand_string(cmd->args[i], exit_status);
+		if (!expanded_arg)
+		{
+			free(cmd->args[i]);
+			j = i;
+			while (cmd->args[j])
+			{
+				cmd->args[j] = cmd->args[j + 1];
+				j++;
+			}
+			continue ;
+		}
+		free(cmd->args[i]);
+		cmd->args[i] = expanded_arg;
+		i++;
+	}
+}
+
+void	expand_command(t_command *cmd_list, int exit_status)
 {
 	t_command	*cmd;
 	int			i;
 	int			j;
-	char		*expanded_arg;
 
 	cmd = cmd_list;
 	while (cmd)
@@ -115,24 +138,8 @@ int	expand_command(t_command *cmd_list, int exit_status)
 		if (cmd->args)
 		{
 			i = 0;
-			while (cmd->args[i])
-			{
-				expanded_arg = expand_string(cmd->args[i], exit_status);
-				if (!expanded_arg)
-				{
-					free(cmd->args[i]);
-					j = i;
-					while (cmd->args[j])
-					{
-						cmd->args[j] = cmd->args[j + 1];
-						j++;
-					}
-					continue ;
-				}
-				free(cmd->args[i]);
-				cmd->args[i] = expanded_arg;
-				i++;
-			}
+			j = 0;
+			expand_command_util(cmd, i, j, exit_status);
 			if (cmd->args[0] == NULL)
 			{
 				free(cmd->args);
@@ -141,25 +148,16 @@ int	expand_command(t_command *cmd_list, int exit_status)
 		}
 		cmd = cmd->next;
 	}
-	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
+void	main_loop(t_tools tools, t_command *cmd_list, int *exit_status,
+		char **my_envp)
 {
-	char		**my_envp;
-	char		*input;
-	t_tools		tools;
-	t_command	*cmd_list;
-	int			last_exit_status;
+	char	*input;
 
-	(void)argc;
-	(void)argv;
-	my_envp = copy_env(envp);
-	last_exit_status = 0;
-	setup_signal_handlers();
 	while (1)
 	{
-		g_shell_state = STATE_INTERACTIVE;
+		g_shell_state = 0;
 		input = readline("minishell> ");
 		if (!input)
 		{
@@ -172,23 +170,37 @@ int	main(int argc, char **argv, char **envp)
 		tools.lexer_list = NULL;
 		if (!token_reader(&tools))
 		{
-			fprintf(stderr, "トークン解析エラー\n");
 			free(input);
 			continue ;
 		}
 		cmd_list = parse_tokens(tools.lexer_list);
 		if (!cmd_list)
 		{
-			fprintf(stderr, "パースエラー\n");
 			free_tools(&tools);
 			continue ;
 		}
-		if (expand_command(cmd_list, last_exit_status))
-			continue ;
-		judge_command_list(cmd_list, &my_envp, &last_exit_status);
+		expand_command(cmd_list, *exit_status);
+		judge_command_list(cmd_list, &my_envp, exit_status);
 		free_commands(cmd_list);
 		free_tools(&tools);
 	}
-	free_env(my_envp);
-	return (last_exit_status);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	char		**my_envp;
+	t_tools		tools;
+	t_command	*cmd_list;
+	int			last_exit_status;
+
+	(void)argc;
+	(void)argv;
+	my_envp = copy_env(envp);
+	last_exit_status = 0;
+	tools.args = NULL;
+	tools.lexer_list = NULL;
+	cmd_list = NULL;
+	setup_signal_handlers();
+	main_loop(tools, cmd_list, &last_exit_status, my_envp);
+	return (free_env(my_envp), last_exit_status);
 }
