@@ -42,6 +42,10 @@ int	handle_pipe(t_lexer **lexer, t_command **current)
 
 static int	handle_redir_out(t_lexer **lexer, t_command *current)
 {
+	int		flags;
+	int		fd;
+	char	*new_output_file;
+
 	if ((*lexer)->token != REDIR_OUT && (*lexer)->token != APPEND_OUT)
 		return (0);
 	if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
@@ -49,9 +53,18 @@ static int	handle_redir_out(t_lexer **lexer, t_command *current)
 		fprintf(stderr, "Syntax error: expected file after redirection\n");
 		return (-1);
 	}
-	current->output_file = ft_strdup((*lexer)->next->str);
-	if (!current->output_file)
+	new_output_file = ft_strdup((*lexer)->next->str);
+	if (!new_output_file)
 		return (-1);
+	if (current->output_file != NULL)
+	{
+		flags = O_WRONLY | O_CREAT | O_TRUNC;
+		fd = open(current->output_file, flags, 0644);
+		if (fd != -1)
+			close(fd);
+		free(current->output_file);
+	}
+	current->output_file = new_output_file;
 	if ((*lexer)->token == APPEND_OUT)
 		current->append = 1;
 	else

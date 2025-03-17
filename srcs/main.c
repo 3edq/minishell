@@ -36,6 +36,22 @@ char	**copy_env(char **envp)
 	return (new_env);
 }
 
+void	free_heredoc_list(t_heredoc *heredoc_list)
+{
+	t_heredoc	*current;
+	t_heredoc	*next;
+
+	current = heredoc_list;
+	while (current)
+	{
+		next = current->next;
+		if (current->delimiter)
+			free(current->delimiter);
+		free(current);
+		current = next;
+	}
+}
+
 void	free_commands(t_command *cmd)
 {
 	t_command	*tmp;
@@ -59,6 +75,8 @@ void	free_commands(t_command *cmd)
 			free(tmp->input_file);
 		if (tmp->output_file)
 			free(tmp->output_file);
+		if (tmp->heredoc_list)
+			free_heredoc_list(tmp->heredoc_list);
 		free(tmp);
 	}
 }
@@ -87,20 +105,39 @@ int	expand_command(t_command *cmd_list, int exit_status)
 {
 	t_command	*cmd;
 	int			i;
+	int			j;
 	char		*expanded_arg;
 
 	cmd = cmd_list;
 	while (cmd)
 	{
 		i = 0;
-		while (cmd->args && cmd->args[i])
+		if (cmd->args)
 		{
-			expanded_arg = expand_string(cmd->args[i], exit_status);
-			if (!expanded_arg)
-				return (1);
-			free(cmd->args[i]);
-			cmd->args[i] = expanded_arg;
-			i++;
+			i = 0;
+			while (cmd->args[i])
+			{
+				expanded_arg = expand_string(cmd->args[i], exit_status);
+				if (!expanded_arg)
+				{
+					free(cmd->args[i]);
+					j = i;
+					while (cmd->args[j])
+					{
+						cmd->args[j] = cmd->args[j + 1];
+						j++;
+					}
+					continue ;
+				}
+				free(cmd->args[i]);
+				cmd->args[i] = expanded_arg;
+				i++;
+			}
+			if (cmd->args[0] == NULL)
+			{
+				free(cmd->args);
+				cmd->args = NULL;
+			}
 		}
 		cmd = cmd->next;
 	}

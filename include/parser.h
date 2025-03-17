@@ -1,10 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 16:10:44 by enkwak            #+#    #+#             */
+/*   Updated: 2025/03/17 16:10:48 by enkwak           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSER_H
 # define PARSER_H
 # include "../libft/libft.h"
 # include "lexer.h"
+# include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <unistd.h>
 
 typedef struct s_heredoc
 {
@@ -32,7 +46,6 @@ int						which_redirect(t_lexer **lexer_list,
 void					*ft_realloc(void *ptr, size_t old_size,
 							size_t new_size);
 t_command				*new_command(void);
-char					*expand_string(const char *input, int exit_status);
 void					add_heredoc(t_command *cmd, char *delimiter);
 int						handle_heredoc(t_lexer **lexer, t_command *current);
 

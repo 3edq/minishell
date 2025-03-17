@@ -1,9 +1,23 @@
-#ifndef TOKENS_H
-# define TOKENS_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 16:10:10 by enkwak            #+#    #+#             */
+/*   Updated: 2025/03/17 16:32:29 by enkwak           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef LEXER_H
+# define LEXER_H
 
 # include "../libft/libft.h"
+# include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 typedef struct s_lexer
 {
