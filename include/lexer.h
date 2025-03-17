@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:10:10 by enkwak            #+#    #+#             */
-/*   Updated: 2025/03/17 16:32:29 by enkwak           ###   ########.fr       */
+/*   Updated: 2025/03/17 21:13:46 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,7 @@ enum				e_token_type
 int					token_reader(t_tools *tools);
 int					add_lexer_node(char *str, int token, t_lexer **lexer_list);
 int					is_space(char c);
-char				*ft_substr(char const *s, unsigned int start, size_t len);
 int					skip_spaces(char *str, int i);
-int					count_quotes(int i, char *str);
 t_lexer				*ft_lexernew(char *str, int token);
 void				ft_lexer_back(t_lexer **lst, t_lexer *new);
 

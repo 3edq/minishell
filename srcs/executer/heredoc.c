@@ -42,12 +42,12 @@ void	apply_heredoc(t_command *cmd)
 	}
 	apply_heredoc_multi(cmd);
 }
+
 int	process_all_heredocs(t_command *cmd_list, int *status)
 {
 	t_command	*current;
 	t_heredoc	*heredoc_current;
 	int			saved_stdin;
-	int			result;
 
 	saved_stdin = dup(STDIN_FILENO);
 	current = cmd_list;
@@ -56,8 +56,7 @@ int	process_all_heredocs(t_command *cmd_list, int *status)
 		heredoc_current = current->heredoc_list;
 		while (heredoc_current)
 		{
-			result = handle_single_heredoc(heredoc_current);
-			if (result)
+			if (handle_single_heredoc(heredoc_current))
 			{
 				dup2(saved_stdin, STDIN_FILENO);
 				close(saved_stdin);
@@ -86,6 +85,36 @@ static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
 		{
 			fprintf(stderr, "minishell: warning: here-document delimited by");
 			fprintf(stderr, " end-of-file (wanted `%s')\n", delimiter);
+			break ;
+		}
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(pipe_fds[1], line, ft_strlen(line));
+		write(pipe_fds[1], "\n", 1);
+		free(line);
+	}
+	close(pipe_fds[1]);
+	exit(0);
+}
+
+static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
+{
+	char	*line;
+
+	signal(SIGINT, SIG_DFL);
+	close(pipe_fds[0]);
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			ft_putstr_fd("bash: warning: here-document ", 2);
+			ft_putstr_fd("at line 1 delimited by end-of-file (wanted `", 2);
+			ft_putstr_fd(delimiter, 2);
+			ft_putstr_fd("')\n", 2);
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)

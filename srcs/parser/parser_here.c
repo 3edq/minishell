@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_here.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:14:54 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 22:14:57 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
@@ -60,7 +72,8 @@ int	handle_heredoc(t_lexer **lexer, t_command *current)
 		return (0);
 	if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
 	{
-		fprintf(stderr, "Syntax error: expected delimiter after <<\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
+			2);
 		return (-1);
 	}
 	delimiter = ft_strdup((*lexer)->next->str);

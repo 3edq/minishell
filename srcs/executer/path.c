@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   path.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:28:54 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 22:28:57 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static void	free_tab(char **tab)
@@ -34,12 +46,30 @@ static char	*build_path(char *dir, char *cmd)
 	return (NULL);
 }
 
+static char	*try_path(char **paths, char *cmd)
+{
+	char	*path;
+	int		i;
+
+	i = 0;
+	while (paths[i])
+	{
+		path = build_path(paths[i], cmd);
+		if (path)
+		{
+			free_tab(paths);
+			return (path);
+		}
+		i++;
+	}
+	free_tab(paths);
+	return (NULL);
+}
+
 char	*find_path(char *cmd, char **envp)
 {
-	char **paths;
-	char *path;
-	int i;
-	char *path_env;
+	char	**paths;
+	char	*path_env;
 
 	if (!cmd || cmd[0] == '\0')
 		return (NULL);
@@ -55,17 +85,5 @@ char	*find_path(char *cmd, char **envp)
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		path = build_path(paths[i], cmd);
-		if (path)
-		{
-			free_tab(paths);
-			return (path);
-		}
-		i++;
-	}
-	free_tab(paths);
-	return (NULL);
+	return (try_path(paths, cmd));
 }

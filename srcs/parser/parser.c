@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:15:16 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 22:16:38 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
@@ -16,6 +28,7 @@ t_command	*new_command(void)
 	cmd->next = NULL;
 	return (cmd);
 }
+
 static int	add_argument(t_command *cmd, char *arg)
 {
 	int		count;

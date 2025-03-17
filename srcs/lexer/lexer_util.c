@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_util.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 21:14:10 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 21:14:14 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
 
 int	is_space(char c)
@@ -13,24 +25,6 @@ int	skip_spaces(char *str, int i)
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	return (i);
-}
-
-int	count_quotes(int i, char *str)
-{
-	char	quote;
-	int		j;
-
-	if (!str[i])
-		return (0);
-	quote = str[i];
-	j = 1;
-	while (str[i + j])
-	{
-		if (str[i + j] == quote)
-			return (j + 1);
-		j++;
-	}
-	return (-1);
 }
 
 int	add_lexer_node(char *str, int token, t_lexer **lexer_list)

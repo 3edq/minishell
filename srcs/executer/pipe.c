@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:25:38 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 22:25:41 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
 static void	child_process(t_command *cmd, char ***envp, int *status,
@@ -11,6 +23,8 @@ static void	child_process(t_command *cmd, char ***envp, int *status,
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close(pipe_fd[1]);
 	}
+	if (!cmd->args || !cmd->args[0])
+		exit(0);
 	if (is_builtin(cmd->args[0]))
 		exit(execute_builtin(cmd, envp));
 	else

@@ -172,14 +172,12 @@ int	main(int argc, char **argv, char **envp)
 		tools.lexer_list = NULL;
 		if (!token_reader(&tools))
 		{
-			fprintf(stderr, "トークン解析エラー\n");
 			free(input);
 			continue ;
 		}
 		cmd_list = parse_tokens(tools.lexer_list);
 		if (!cmd_list)
 		{
-			fprintf(stderr, "パースエラー\n");
 			free_tools(&tools);
 			continue ;
 		}

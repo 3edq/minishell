@@ -1,4 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 21:41:32 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 21:47:18 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
+
+int	count_quotes(int i, char *str)
+{
+	char	quote;
+	int		j;
+
+	if (!str[i])
+		return (0);
+	quote = str[i];
+	j = 1;
+	while (str[i + j])
+	{
+		if (str[i + j] == quote)
+			return (j + 1);
+		j++;
+	}
+	return (-1);
+}
 
 int	get_token_type(int c)
 {
@@ -51,7 +81,7 @@ int	parse_word_token(char *str, int i, t_lexer **lexer_list)
 			quote_len = count_quotes(i + j, str);
 			if (quote_len < 0)
 			{
-				fprintf(stderr, "Error: closing quote not found.\n");
+				ft_putstr_fd("Error: closing quote not found.\n", 2);
 				return (-1);
 			}
 			j += quote_len;
@@ -61,10 +91,7 @@ int	parse_word_token(char *str, int i, t_lexer **lexer_list)
 	}
 	word = ft_substr(str, i, j);
 	if (!word || !add_lexer_node(word, TOKEN_WORD, lexer_list))
-	{
-		free(word);
-		return (-1);
-	}
+		return (free(word), -1);
 	return (j);
 }
 

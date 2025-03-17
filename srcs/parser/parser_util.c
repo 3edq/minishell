@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_util.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:14:38 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/17 22:22:06 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
@@ -42,33 +54,29 @@ int	handle_pipe(t_lexer **lexer, t_command **current)
 
 static int	handle_redir_out(t_lexer **lexer, t_command *current)
 {
-	int		flags;
 	int		fd;
-	char	*new_output_file;
+	char	*new_file;
 
 	if ((*lexer)->token != REDIR_OUT && (*lexer)->token != APPEND_OUT)
 		return (0);
-	if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
+	if (!(*lexer)->next || (*lexer)->next->token != TOKEN_WORD)
 	{
-		fprintf(stderr, "Syntax error: expected file after redirection\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
+			2);
 		return (-1);
 	}
-	new_output_file = ft_strdup((*lexer)->next->str);
-	if (!new_output_file)
+	new_file = ft_strdup((*lexer)->next->str);
+	if (!new_file)
 		return (-1);
-	if (current->output_file != NULL)
+	if (current->output_file)
 	{
-		flags = O_WRONLY | O_CREAT | O_TRUNC;
-		fd = open(current->output_file, flags, 0644);
+		fd = open(current->output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd != -1)
 			close(fd);
 		free(current->output_file);
 	}
-	current->output_file = new_output_file;
-	if ((*lexer)->token == APPEND_OUT)
-		current->append = 1;
-	else
-		current->append = 0;
+	current->output_file = new_file;
+	current->append = ((*lexer)->token == APPEND_OUT);
 	*lexer = (*lexer)->next->next;
 	return (1);
 }
@@ -97,7 +105,7 @@ int	which_redirect(t_lexer **lexer_list, t_command *current)
 	ret = handle_heredoc(lexer_list, current);
 	if (ret == -1)
 	{
-		fprintf(stderr, "Error: Invalid heredoc redirection\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
 		return (-1);
 	}
 	if (ret == 1)
@@ -105,7 +113,7 @@ int	which_redirect(t_lexer **lexer_list, t_command *current)
 	ret = handle_redir_in(lexer_list, current);
 	if (ret == -1)
 	{
-		fprintf(stderr, "Error: Invalid input redirection\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
 		return (-1);
 	}
 	if (ret == 1)
@@ -113,10 +121,8 @@ int	which_redirect(t_lexer **lexer_list, t_command *current)
 	ret = handle_redir_out(lexer_list, current);
 	if (ret == -1)
 	{
-		fprintf(stderr, "Error: Invalid output redirection\n");
+		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
 		return (-1);
 	}
-	if (ret == 1)
-		return (1);
-	return (0);
+	return (ret);
 }
