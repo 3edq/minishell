@@ -1,75 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/18 10:15:04 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/18 10:41:01 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../include/minishell.h"
 
-static void	apply_heredoc_multi(t_command *cmd)
+static pid_t	heredoc_fork(int pipe_fds[2])
 {
-	t_heredoc	*current;
-	t_heredoc	*last_heredoc;
+	pid_t	pid;
 
-	last_heredoc = cmd->heredoc_list;
-	while (last_heredoc->next)
-		last_heredoc = last_heredoc->next;
-	if (last_heredoc && last_heredoc->fd > 0)
+	if (pipe(pipe_fds) == -1)
 	{
-		dup2(last_heredoc->fd, STDIN_FILENO);
-		close(last_heredoc->fd);
-		last_heredoc->fd = -1;
+		perror("pipe");
+		return (-1);
 	}
-	current = cmd->heredoc_list;
-	while (current)
+	pid = fork();
+	if (pid == -1)
 	{
-		if (current != last_heredoc && current->fd > 0)
-		{
-			close(current->fd);
-			current->fd = -1;
-		}
-		current = current->next;
+		perror("fork");
+		close(pipe_fds[0]);
+		close(pipe_fds[1]);
+		return (-1);
 	}
+	return (pid);
 }
 
-void	apply_heredoc(t_command *cmd)
+static void	print_heredoc_warning(char *delimiter)
 {
-	if (!cmd->heredoc_list)
-		return ;
-	if (!cmd->heredoc_list->next)
-	{
-		if (cmd->heredoc_list->fd > 0)
-		{
-			dup2(cmd->heredoc_list->fd, STDIN_FILENO);
-			close(cmd->heredoc_list->fd);
-			cmd->heredoc_list->fd = -1;
-		}
-		return ;
-	}
-	apply_heredoc_multi(cmd);
-}
-
-int	process_all_heredocs(t_command *cmd_list, int *status)
-{
-	t_command	*current;
-	t_heredoc	*heredoc_current;
-	int			saved_stdin;
-
-	saved_stdin = dup(STDIN_FILENO);
-	current = cmd_list;
-	while (current)
-	{
-		heredoc_current = current->heredoc_list;
-		while (heredoc_current)
-		{
-			if (handle_single_heredoc(heredoc_current))
-			{
-				dup2(saved_stdin, STDIN_FILENO);
-				close(saved_stdin);
-				*status = 130;
-				return (1);
-			}
-			heredoc_current = heredoc_current->next;
-		}
-		current = current->next;
-	}
-	dup2(saved_stdin, STDIN_FILENO);
-	close(saved_stdin);
-	return (0);
+	ft_putstr_fd("bash: warning: here-document ", 2);
+	ft_putstr_fd("at line 1 delimited by end-of-file (wanted `", 2);
+	ft_putstr_fd(delimiter, 2);
+	ft_putstr_fd("')\n", 2);
 }
 
 static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
@@ -83,38 +51,7 @@ static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
 		line = readline("> ");
 		if (!line)
 		{
-			fprintf(stderr, "minishell: warning: here-document delimited by");
-			fprintf(stderr, " end-of-file (wanted `%s')\n", delimiter);
-			break ;
-		}
-		if (ft_strcmp(line, delimiter) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(pipe_fds[1], line, ft_strlen(line));
-		write(pipe_fds[1], "\n", 1);
-		free(line);
-	}
-	close(pipe_fds[1]);
-	exit(0);
-}
-
-static void	handle_heredoc_child(int *pipe_fds, char *delimiter)
-{
-	char	*line;
-
-	signal(SIGINT, SIG_DFL);
-	close(pipe_fds[0]);
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-		{
-			ft_putstr_fd("bash: warning: here-document ", 2);
-			ft_putstr_fd("at line 1 delimited by end-of-file (wanted `", 2);
-			ft_putstr_fd(delimiter, 2);
-			ft_putstr_fd("')\n", 2);
+			print_heredoc_warning(delimiter);
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
@@ -139,33 +76,20 @@ int	handle_single_heredoc(t_heredoc *heredoc)
 	if (!heredoc || !heredoc->delimiter)
 		return (0);
 	g_shell_state = STATE_HEREDOC;
-	if (pipe(pipe_fds) == -1)
-	{
-		perror("pipe");
-		return (0);
-	}
-	pid = fork();
+	pid = heredoc_fork(pipe_fds);
 	if (pid == -1)
-	{
-		perror("fork");
-		close(pipe_fds[0]);
-		close(pipe_fds[1]);
 		return (0);
-	}
 	if (pid == 0)
 		handle_heredoc_child(pipe_fds, heredoc->delimiter);
-	else
+	close(pipe_fds[1]);
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
-		close(pipe_fds[1]);
-		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			close(pipe_fds[0]);
-			g_shell_state = STATE_INTERACTIVE;
-			return (1);
-		}
-		heredoc->fd = pipe_fds[0];
+		close(pipe_fds[0]);
 		g_shell_state = STATE_INTERACTIVE;
+		return (1);
 	}
+	heredoc->fd = pipe_fds[0];
+	g_shell_state = STATE_INTERACTIVE;
 	return (0);
 }

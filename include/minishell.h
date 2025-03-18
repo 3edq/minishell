@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:10:32 by enkwak            #+#    #+#             */
-/*   Updated: 2025/03/17 16:10:34 by enkwak           ###   ########.fr       */
+/*   Updated: 2025/03/18 11:17:06 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,11 @@ typedef struct s_expand_ctx
 	int							quote_state;
 }								t_expand_ctx;
 
+int								shell_loop(char ***my_envp,
+									int *last_exit_status);
+void							process_command(t_tools *tools,
+									t_command **cmd_list, char ***my_envp,
+									int *last_exit_status);
 int								process_all_heredocs(t_command *cmd_list,
 									int *status);
 int								handle_single_heredoc(t_heredoc *heredoc);
@@ -61,6 +66,8 @@ void							free_lexer_list(t_lexer *lexer);
 void							free_tools(t_tools *tools);
 void							apply_heredoc(t_command *cmd);
 void							setup_signal_handlers(void);
+int								expand_command(t_command *cmd_list,
+									int exit_status);
 
 char							*expand_string(const char *input,
 									int exit_status);
