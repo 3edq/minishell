@@ -6,7 +6,7 @@
 /*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 22:15:16 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/17 22:16:38 by ksaegusa         ###   ########.fr       */
+/*   Updated: 2025/03/18 11:46:59 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static int	process_token(t_lexer **lexer_list, t_command **current)
 		{
 			if (!add_argument(*current, (*lexer_list)->str))
 			{
-				fprintf(stderr, "Memory allocation error\n");
+				ft_putstr_fd("Memory allocation error\n", STDERR_FILENO);
 				return (-1);
 			}
 		}

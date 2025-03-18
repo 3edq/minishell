@@ -6,7 +6,7 @@
 /*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 22:14:38 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/17 22:22:06 by ksaegusa         ###   ########.fr       */
+/*   Updated: 2025/03/18 11:47:27 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ static int	handle_redir_in(t_lexer **lexer, t_command *current)
 		return (0);
 	if ((*lexer)->next == NULL || (*lexer)->next->token != TOKEN_WORD)
 	{
-		fprintf(stderr,
-			"Syntax error: expected file after input redirection\n");
+		ft_putstr_fd("Syntax error: expected file after input redirection\n",
+			STDERR_FILENO);
 		return (-1);
 	}
 	current->input_file = ft_strdup((*lexer)->next->str);
