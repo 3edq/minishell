@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:10:44 by enkwak            #+#    #+#             */
-/*   Updated: 2025/03/17 16:10:48 by enkwak           ###   ########.fr       */
+/*   Updated: 2025/03/18 16:43:21 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
-t_command				*parse_tokens(t_lexer *lexer_list);
+t_command				*parse_tokens(t_lexer *lexer_list,
+							int *last_exit_status);
 void					free_commands(t_command *cmd);
 int						handle_pipe(t_lexer **lexer, t_command **current);
 int						which_redirect(t_lexer **lexer_list,

@@ -1,165 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/18 11:26:09 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/18 18:14:46 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
-volatile t_shell_state	g_shell_state = STATE_INTERACTIVE;
+volatile int	g_shell_state = 0;
 
-void	free_env(char **envp)
+void	process_command(t_tools *tools, t_command **cmd_list, char ***my_envp,
+		int *last_exit_status)
 {
-	int	i;
-
-	i = 0;
-	while (envp[i])
+	if (!token_reader(tools))
 	{
-		free(envp[i]);
-		i++;
+		free(tools->args);
+		return ;
 	}
-	free(envp);
-}
-
-char	**copy_env(char **envp)
-{
-	int		i;
-	char	**new_env;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	new_env = malloc(sizeof(char *) * (i + 1));
-	if (!new_env)
-		return (NULL);
-	i = 0;
-	while (envp[i])
+	*cmd_list = parse_tokens(tools->lexer_list, last_exit_status);
+	if (!*cmd_list)
 	{
-		new_env[i] = ft_strdup(envp[i]);
-		i++;
+		free_tools(tools);
+		return ;
 	}
-	new_env[i] = NULL;
-	return (new_env);
+	if (expand_command(*cmd_list, *last_exit_status))
+		return ;
+	judge_command_list(*cmd_list, my_envp, last_exit_status);
+	free_commands(*cmd_list);
+	free_tools(tools);
 }
 
-void	free_heredoc_list(t_heredoc *heredoc_list)
+int	shell_loop(char ***my_envp, int *last_exit_status)
 {
-	t_heredoc	*current;
-	t_heredoc	*next;
-
-	current = heredoc_list;
-	while (current)
-	{
-		next = current->next;
-		if (current->delimiter)
-			free(current->delimiter);
-		free(current);
-		current = next;
-	}
-}
-
-void	free_commands(t_command *cmd)
-{
-	t_command	*tmp;
-	int			i;
-
-	while (cmd)
-	{
-		tmp = cmd;
-		cmd = cmd->next;
-		if (tmp->args)
-		{
-			i = 0;
-			while (tmp->args[i])
-			{
-				free(tmp->args[i]);
-				i++;
-			}
-			free(tmp->args);
-		}
-		if (tmp->input_file)
-			free(tmp->input_file);
-		if (tmp->output_file)
-			free(tmp->output_file);
-		if (tmp->heredoc_list)
-			free_heredoc_list(tmp->heredoc_list);
-		free(tmp);
-	}
-}
-
-void	free_lexer_list(t_lexer *lexer)
-{
-	t_lexer	*tmp;
-
-	while (lexer)
-	{
-		tmp = lexer;
-		lexer = lexer->next;
-		if (tmp->str)
-			free(tmp->str);
-		free(tmp);
-	}
-}
-
-void	free_tools(t_tools *tools)
-{
-	free_lexer_list(tools->lexer_list);
-	free(tools->args);
-}
-
-int	expand_command(t_command *cmd_list, int exit_status)
-{
-	t_command	*cmd;
-	int			i;
-	int			j;
-	char		*expanded_arg;
-
-	cmd = cmd_list;
-	while (cmd)
-	{
-		i = 0;
-		if (cmd->args)
-		{
-			i = 0;
-			while (cmd->args[i])
-			{
-				expanded_arg = expand_string(cmd->args[i], exit_status);
-				if (!expanded_arg)
-				{
-					free(cmd->args[i]);
-					j = i;
-					while (cmd->args[j])
-					{
-						cmd->args[j] = cmd->args[j + 1];
-						j++;
-					}
-					continue ;
-				}
-				free(cmd->args[i]);
-				cmd->args[i] = expanded_arg;
-				i++;
-			}
-			if (cmd->args[0] == NULL)
-			{
-				free(cmd->args);
-				cmd->args = NULL;
-			}
-		}
-		cmd = cmd->next;
-	}
-	return (0);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	char		**my_envp;
 	char		*input;
 	t_tools		tools;
 	t_command	*cmd_list;
-	int			last_exit_status;
 
-	(void)argc;
-	(void)argv;
-	my_envp = copy_env(envp);
-	last_exit_status = 0;
-	setup_signal_handlers();
 	while (1)
 	{
-		g_shell_state = STATE_INTERACTIVE;
+		g_shell_state = 0;
 		input = readline("minishell> ");
 		if (!input)
 		{
@@ -170,25 +54,21 @@ int	main(int argc, char **argv, char **envp)
 			add_history(input);
 		tools.args = input;
 		tools.lexer_list = NULL;
-		if (!token_reader(&tools))
-		{
-			fprintf(stderr, "トークン解析エラー\n");
-			free(input);
-			continue ;
-		}
-		cmd_list = parse_tokens(tools.lexer_list);
-		if (!cmd_list)
-		{
-			fprintf(stderr, "パースエラー\n");
-			free_tools(&tools);
-			continue ;
-		}
-		if (expand_command(cmd_list, last_exit_status))
-			continue ;
-		judge_command_list(cmd_list, &my_envp, &last_exit_status);
-		free_commands(cmd_list);
-		free_tools(&tools);
+		process_command(&tools, &cmd_list, my_envp, last_exit_status);
 	}
-	free_env(my_envp);
-	return (last_exit_status);
+	free_env(*my_envp);
+	return (*last_exit_status);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	char	**my_envp;
+	int		last_exit_status;
+
+	(void)argc;
+	(void)argv;
+	my_envp = copy_env(envp);
+	last_exit_status = 0;
+	setup_signal_handlers();
+	return (shell_loop(&my_envp, &last_exit_status));
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/17 22:15:16 by ksaegusa          #+#    #+#             */
+/*   Updated: 2025/03/18 16:42:08 by ksaegusa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
@@ -16,6 +28,7 @@ t_command	*new_command(void)
 	cmd->next = NULL;
 	return (cmd);
 }
+
 static int	add_argument(t_command *cmd, char *arg)
 {
 	int		count;
@@ -56,7 +69,7 @@ static int	process_token(t_lexer **lexer_list, t_command **current)
 		{
 			if (!add_argument(*current, (*lexer_list)->str))
 			{
-				fprintf(stderr, "Memory allocation error\n");
+				ft_putstr_fd("Memory allocation error\n", STDERR_FILENO);
 				return (-1);
 			}
 		}
@@ -65,7 +78,22 @@ static int	process_token(t_lexer **lexer_list, t_command **current)
 	return (0);
 }
 
-t_command	*parse_tokens(t_lexer *lexer_list)
+void	free_args(char **args)
+{
+	int	i;
+
+	if (!args)
+		return ;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+t_command	*parse_tokens(t_lexer *lexer_list, int *last_exit_status)
 {
 	t_command	*head;
 	t_command	*current;
@@ -78,7 +106,17 @@ t_command	*parse_tokens(t_lexer *lexer_list)
 	while (lexer_list)
 	{
 		ret = process_token(&lexer_list, &current);
-		if (ret == -1)
+		if (ret == 2)
+		{
+			*last_exit_status = 2;
+			if (head->args)
+			{
+				free_args(head->args);
+				head->args = NULL;
+			}
+			return (head);
+		}
+		else if (ret == -1)
 			return (head);
 	}
 	return (head);
