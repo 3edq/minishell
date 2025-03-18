@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 10:36:31 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/18 10:36:34 by ksaegusa         ###   ########.fr       */
+/*   Updated: 2025/03/18 12:07:04 by enkwak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 {
 	int	fds[2];
 
-	g_shell_state = STATE_EXECUTING;
+	g_shell_state = 2;
 	if (process_all_heredocs(cmd_list, status))
 		return ;
 	if (cmd_list->next)
@@ -92,5 +92,5 @@ void	judge_command_list(t_command *cmd_list, char ***envp, int *status)
 		close(fds[0]);
 		close(fds[1]);
 	}
-	g_shell_state = STATE_INTERACTIVE;
+	g_shell_state = 0;
 }

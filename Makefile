@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+         #
+#    By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/17 16:21:27 by enkwak            #+#    #+#              #
-#    Updated: 2025/03/18 11:24:06 by ksaegusa         ###   ########.fr        #
+#    Updated: 2025/03/18 11:59:43 by enkwak           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRCS = $(SRC_DIR)/main.c \
        $(BUILTIN_DIR)/builtin_env.c \
        $(BUILTIN_DIR)/builtin_exit.c \
        $(BUILTIN_DIR)/builtin_export.c \
+       $(BUILTIN_DIR)/builtin_export_utils.c \
        $(BUILTIN_DIR)/builtin_pwd.c \
        $(BUILTIN_DIR)/builtin_unset.c \
        $(EXECUTER_DIR)/executer.c \

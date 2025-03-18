@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 10:15:04 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/18 10:41:01 by ksaegusa         ###   ########.fr       */
+/*   Updated: 2025/03/18 12:06:39 by enkwak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	handle_single_heredoc(t_heredoc *heredoc)
 
 	if (!heredoc || !heredoc->delimiter)
 		return (0);
-	g_shell_state = STATE_HEREDOC;
+	g_shell_state = 1;
 	pid = heredoc_fork(pipe_fds);
 	if (pid == -1)
 		return (0);
@@ -86,10 +86,10 @@ int	handle_single_heredoc(t_heredoc *heredoc)
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		close(pipe_fds[0]);
-		g_shell_state = STATE_INTERACTIVE;
+		g_shell_state = 0;
 		return (1);
 	}
 	heredoc->fd = pipe_fds[0];
-	g_shell_state = STATE_INTERACTIVE;
+	g_shell_state = 0;
 	return (0);
 }

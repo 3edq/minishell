@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 11:26:09 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/18 11:26:11 by ksaegusa         ###   ########.fr       */
+/*   Updated: 2025/03/18 12:04:37 by enkwak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-volatile t_shell_state	g_shell_state = STATE_INTERACTIVE;
+volatile int	g_shell_state = 0;
 
 void	process_command(t_tools *tools, t_command **cmd_list, char ***my_envp,
 		int *last_exit_status)
@@ -43,7 +43,7 @@ int	shell_loop(char ***my_envp, int *last_exit_status)
 
 	while (1)
 	{
-		g_shell_state = STATE_INTERACTIVE;
+		g_shell_state = 0;
 		input = readline("minishell> ");
 		if (!input)
 		{
