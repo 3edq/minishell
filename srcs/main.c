@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 11:26:09 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/18 12:04:37 by enkwak           ###   ########.fr       */
+/*   Updated: 2025/03/18 17:26:26 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	process_command(t_tools *tools, t_command **cmd_list, char ***my_envp,
 		free(tools->args);
 		return ;
 	}
-	*cmd_list = parse_tokens(tools->lexer_list);
+	*cmd_list = parse_tokens(tools->lexer_list, last_exit_status);
 	if (!*cmd_list)
 	{
 		free_tools(tools);

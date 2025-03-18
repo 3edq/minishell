@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: enkwak <enkwak@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ksaegusa <ksaegusa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 22:14:38 by ksaegusa          #+#    #+#             */
-/*   Updated: 2025/03/18 12:19:08 by enkwak           ###   ########.fr       */
+/*   Updated: 2025/03/18 16:41:05 by ksaegusa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	handle_redir_out(t_lexer **lexer, t_command *current)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
 			2);
-		return (-1);
+		return (2);
 	}
 	new_file = ft_strdup((*lexer)->next->str);
 	if (!new_file)
@@ -89,7 +89,7 @@ static int	handle_redir_in(t_lexer **lexer, t_command *current)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
 			2);
-		return (-1);
+		return (2);
 	}
 	current->input_file = ft_strdup((*lexer)->next->str);
 	if (!current->input_file)
@@ -103,17 +103,11 @@ int	which_redirect(t_lexer **lexer_list, t_command *current)
 	int	ret;
 
 	ret = handle_heredoc(lexer_list, current);
-	if (ret == -1)
-		return (-1);
-	if (ret == 1)
-		return (1);
+	if (ret != 0)
+		return (ret);
 	ret = handle_redir_in(lexer_list, current);
-	if (ret == -1)
-		return (-1);
-	if (ret == 1)
-		return (1);
+	if (ret != 0)
+		return (ret);
 	ret = handle_redir_out(lexer_list, current);
-	if (ret == -1)
-		return (-1);
 	return (ret);
 }
